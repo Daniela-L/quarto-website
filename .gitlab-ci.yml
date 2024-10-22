@@ -16,14 +16,12 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
+image: node:latest
+
 pages:
-  stage: deploy
   script:
-  - mkdir .public
-  - cp -r * .public
-  - mv .public public
+    - mkdir public
+    - cp -r _site/* public  # Copy all files from the Quarto rendered site into the 'public' directory
   artifacts:
     paths:
-    - public
-  only:
-  - main
+      - public
