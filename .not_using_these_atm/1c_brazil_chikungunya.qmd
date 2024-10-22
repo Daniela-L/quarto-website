@@ -1,0 +1,471 @@
+---
+title: "1c_Chikungunya"
+author: "Daniela"
+date: "2022-11-22"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+This document aims at introducing chikungunya data to someone with no previous experience. Before starting it is necessary to have the health data, instructions on how to obtain these are in the ReadMe of this project.
+
+The steps include:
+
+  0. Downloading the data
+  1. Opening, Revising the data to understand its basic structure
+  2. Characterizing chikungunya patients
+  3. Characterizing the course of chikungunya cases, in the matter of symptoms
+  4. Characterizing the course of chikungunya cases, in the matter of time
+  5. Adding the spatial component
+  6. Adding municipal population data
+
+Along the way, the <img src="../Images/flash.jpg" alt="drawing" width="15"/> - sign indicates indicates when to check for inconsistencies in the data and the <img src="../Images/filter.svg" alt="drawing" width="20"/>- sign indicates that there is a line of code to usefully filter data (if necessary).
+
+```{r, warning= FALSE , message=FALSE}
+library(microdatasus)
+library(foreign)
+library(readr)
+library(dplyr)
+library(purrr)
+library(ggplot2)
+library(tidyr)
+library(geobr)
+library(stringr)
+library(patchwork)
+
+options(scipen = 999)
+
+```
+
+# Downloading the data
+
+As described in the ReadMe, the health data from Brazil can be downloaded with the help of the package _microdatasus_. The first line of the following code block will download the data for the year 2017 (which was chosen randomly). If the data was already downloaded previously, the second line can be used to load the data.
+
+```{r  Chik_LoadData, message=FALSE, warning=FALSE}
+chik17 <- fetch_datasus(year_start = 2017, year_end = 2017, information_system = "SINAN-CHIKUNGUNYA")
+#chik17 <- read.dbf("Data/Chik/CHIK_2017.dbf", as.is = TRUE)
+```
+
+
+# Getting to know the Data 
+There are a total of `r length(chik17)` variables. The variables names can be seen below:
+
+```{r Chik_ColumnNames}
+colnames(chik17)
+```
+
+The definition of each variable can be found in the [official documentation](http://portalsinan.saude.gov.br/images/documentos/Agravos/Dengue/DIC_DADOS_ONLINE.pdf) in portuguese, or in this [translated csv file](Workspace/Dictionary_Dengue.csv).  This file also contains the decodification for all numerical categories. A small overview of this file can be seen below: 
+
+```{r  Chik_Dictionary, message=FALSE}
+varEng <- read_csv("Workspace/Dictionary_Dengue.csv")
+varEng[11:17,1:5]
+```
+
+Some of these variables are mandatory to notify, others are not, which leads to incomplete datasets. The dataframe **NAcount** shows the percentage of NA-values for each variable, below you can see it graphically for some of the variables:
+
+```{r  Chik_NAs}
+NAcount <- chik17 %>% map(~mean(is.na(.)))
+NAcount <- data.frame(unlist(NAcount))
+NAcount["var"] <- rownames(NAcount)
+
+p <- ggplot(NAcount[40:50,], aes(x=reorder(var, unlist.NAcount.), y=unlist.NAcount.))+
+  geom_bar(stat="identity", width = 0.9, position = position_dodge(width = 5))+
+  ylab("Percentage of NAs in each column")+
+  xlab("Variables")
+p + coord_flip()
+```
+
+The variables with complete data sets are:
+
+```{r Chik_Complete}
+NAcount$var[NAcount$unlist.NAcount. == 0]
+```
+
+<img src="../Images/filter.svg" alt="drawing" width="20"/> To avoid working with unnecessary data, it is useful to filter out the variables that will not be used. Below is a line of code on how to select only the needed variables.
+
+``` {r Chik_SelectVariables}
+sel_var <- c("NU_NOTIFIC", "TP_NOT", "ID_AGRAVO", "DT_NOTIFIC", "SEM_NOT", "NU_ANO", "SG_UF_NOT", "ID_MUNICIP", "ID_REGIONA", "ID_UNIDADE", "DT_SIN_PRI", "SEM_PRI", "DT_NASC", "NU_IDADE_N", "CS_SEXO", "CS_GESTANT", "CS_RACA", "SG_UF", "ID_MN_RESI", "ID_PAIS", "DT_INVEST", "COUFINF", "COPAISINF", "COMUNINF", "CLASSI_FIN", "CRITERIO") #change this list as needed
+
+#chik17 <- chik17 %>% select(all_of(sel_var))
+```
+
+
+# Information on the Patients
+
+#### Age of patients
+
+To know the age of the chikungunya patients the **NU_IDADE_N** variable is needed. **NU_IDADE_N** is codified:
+
+ * the first number indicates what "dimension" it is using. 
+    1= Hour, 
+    2= day, 
+    3= month, 
+    4= year.
+ * the last numbers indicate the age.
+The age can be "decodified" with the below command line.
+
+Below on the left is the histogram of age based on **NU_IDADE_N**. In the histogram on the right, only patients below the age of 120 were considered to improve the readability of the graph.
+ 
+```{r Chik_Age}
+chik17  <- chik17 %>%
+  mutate(EDAD = case_when(NU_IDADE_N < 1000 ~ as.numeric(NU_IDADE_N), # this line assumes that non-codified data means that the age in years was given
+                          NU_IDADE_N >= 1000 & NU_IDADE_N < 2366 ~ 0,
+                          NU_IDADE_N >= 2366 & NU_IDADE_N < 3000 ~ 1,
+                          NU_IDADE_N >= 3000 & NU_IDADE_N < 3013 ~ 0,
+                          NU_IDADE_N >= 3013 & NU_IDADE_N < 4000 ~ 1,
+                          NU_IDADE_N >= 4000 ~ as.numeric(NU_IDADE_N-4000),
+                          TRUE ~ NA_real_))
+
+
+hist1 <- ggplot(chik17, aes(x=EDAD))+
+  geom_histogram(binwidth = 1)
+hist2 <- ggplot(chik17[chik17$EDAD < 120,], aes(x=EDAD))+
+  geom_histogram(binwidth = 1)
+hist1 + hist2
+```
+
+<img src="../Images/filter.svg" alt="drawing" width="20"/> `r chik17 %>% filter(EDAD > 100) %>% count() ` people are above 100 years old. Depending on what the data will be used for, these cases could be discarded.
+
+
+```{r Chik_AgeFilter}
+#chik17 <- chik17[!(chik17$EDAD > 100)),]
+```
+
+
+#### Sex of the patients 
+The gender of the patients is given by **CS_SEXO**. A bar plot of its distribution can be seen below:
+
+```{r Chik_Sex}
+ggplot(chik17, aes(x=CS_SEXO))+
+  geom_bar()+
+  ggtitle("Sex distribution of chikungunya cases in 2017")+
+  xlab("Sex of the patient")+
+  ylab("Count")
+```
+
+<img src="../Images/flash.jpg" alt="drawing" width="15"/> Another related variable is **CS_GESTANT**, which indicates whether the patient is pregnant. Since only women below a certain age can get pregnant this is another way to  check for inconsistencies. 
+
+```{r Chik_SexFilter}
+mpreg <- chik17 %>% 
+  filter(CS_SEXO == "M" & (CS_GESTANT == 1 | CS_GESTANT == 2 | CS_GESTANT ==3 | CS_GESTANT == 4)) %>%
+  count()
+pover50 <- chik17 %>% 
+  filter(EDAD > 50 & (CS_GESTANT == 1 | CS_GESTANT == 2 | CS_GESTANT ==3 | CS_GESTANT == 4)) %>% 
+  count() 
+
+#chik17 <- chik17[(CS_GESTANT == 1 | CS_GESTANT == 2 | CS_GESTANT ==3 | CS_GESTANT == 4) & (chik17$EDAD > 50 | CS_SEXO == "M"),]
+```
+
+<img src="../Images/filter.svg" alt="drawing" width="20"/> In this case, there are `r mpreg` pregnant males and `r pover50` pregnant women over the age of 50. Again, depending on the aim of the study, these patients could be excluded.
+
+
+
+#### Race/Color of the patients 
+The race of the patient is given by **CS_RACA**.
+
+```{r Chik_Race}
+ggplot(chik17, aes(x=CS_RACA))+
+  geom_bar()+
+  ggtitle("Race/Color distribution of chikungunya cases in 2017")+
+  xlab("Race/Color of the patient")+
+  scale_x_discrete(labels=(c("White", "Black","Yellow","Brown","Indigenous", "Ignored")))+
+  ylab("Count")
+```
+
+
+
+
+# Classifying the chikungunya cases
+This database collects all the suspected cases of chikungunya, however, not all suspected cases are confirmed as chikungunya. The variable **CLASSI_FIN** gives insight about this and about the severity of each case:
+```{r Chik_Classification}
+classi <- chik17 %>% 
+   mutate(
+     CLASSI_FIN = as.factor(case_when(CLASSI_FIN == 5 ~ "Discarded",
+                                      CLASSI_FIN == 13 ~ "Chikungunya",
+                                      TRUE ~ "NA")))
+
+ggplot(classi, aes(x=CLASSI_FIN))+
+  geom_bar()+
+  ggtitle("Final classification of chikungunya cases in 2017")+
+  xlab("Classification category")+
+  ylab("Count")
+```
+
+The majority (`r round((count(chik17[chik17$CLASSI_FIN == 13 & !is.na(chik17$CLASSI_FIN),])/nrow(chik17))*100, digits=1)`%) of the suspected chikungunya cases were confirmed, however `r round((count(chik17[chik17$CLASSI_FIN == 5 & !is.na(chik17$CLASSI_FIN),])/nrow(chik17))*100, digits=1)`% of the cases in 2017 were discarded. If a study only considers confirmed chikungunya cases, these observations should be discarded.
+
+#### Confirmation criteria
+
+It can be of interest how the chikungunya case was tested and confirmed. This is were the variable **CRITERIO** comes in:
+```{r Chik_Confirmation}
+lab <- chik17 %>% filter(CRITERIO == 1) %>% count() 
+clin <-  chik17 %>% filter(CRITERIO == 2) %>% count() 
+critNA <-  chik17 %>% filter(is.na(CRITERIO)) %>% count() 
+ggplot(chik17, aes(x=CRITERIO))+
+  geom_bar()+
+  ggtitle("Confirmation criteria of chikungunya cases in 2017")+
+  xlab("Confirmation criteria")+
+  scale_x_discrete(labels=(c("Laboratory", "Clinical epidimiological","Under investigation")))+
+  ylab("Count")
+```
+
+More than half of the cases (`r round((clin/nrow(chik17))*100, digits = 1)`%) were confirmed/discarded via the criteria of _clinical epidemiology_, which means that a physician talked to the patient. The second confirmation criteria, which was applied in  `r round((lab/nrow(chik17))*100, digits= 1)`% of the cases, is performing _laboratory exams_. A detailed description of which exams are tipically used can be seen in the [exam type section](####exam-type). Finally, there are `r round((critNA/nrow(chik17))*100, digits = 1)`% of cases that are still _under investigation_. Since this is data from 2017, we can safely say that they will never be confirmed.
+
+#### Only confirmed cases
+
+<img src="../Images/filter.svg" alt="drawing" width="20"/> Since there are `r count(chik17[chik17$CLASSI_FIN == "13" & chik17$CRITERIO == "3" & !is.na(chik17$CLASSI_FIN),])` cases that are classified as chikungunya (according to **CLASSI_FIN**) but are still under investigation, these need to be filtered out when the study requires actual confirmed cases. The below line of code can be used to filter out said data.
+```{r Chik_ConfirmationFilter}
+ #chik17 <- chik17 %>% 
+ # mutate(CRITERIO = as.character(CRITERIO)) %>% 
+ # filter((CLASSI_FIN == "1" | CLASSI_FIN == "10" | CLASSI_FIN == "11" | CLASSI_FIN == "12") & (CRITERIO == "1" | CRITERIO == "2"))
+```
+
+
+
+#### Exam type
+
+In the case of confirmation via _laboratory exams_,  there are 9 different possible exams. Each exam has its own variable, where:
+
+  1. the result of the exam is positive
+  2. the result of the exam is negative
+  3. the result of the exam is inconclusive
+  4. the exam was not realized
+```{r Chik_Examtype}
+exams <- chik17 %>% 
+  filter(CRITERIO == 1) %>% 
+  summarise(RES_CHIKS1 = sum(!is.na(RES_CHIKS1) & RES_CHIKS1 != 4 ), 
+            RES_CHIKS2 = sum(!is.na(RES_CHIKS2) & RES_CHIKS2 != 4), 
+            RESUL_PRNT = sum(!is.na(RESUL_PRNT) & RESUL_PRNT != 4), 
+            RESUL_SORO = sum(!is.na(RESUL_SORO) & RESUL_SORO != 4), 
+            RESUL_NS1 = sum(!is.na(RESUL_NS1) & RESUL_NS1 != 4), 
+            RESUL_VI_N = sum(!is.na(RESUL_VI_N) & RESUL_VI_N != 4), 
+            RESUL_PCR_ = sum(!is.na(RESUL_PCR_) & RESUL_PCR_ != 4),
+            HISTOPA_N = sum(!is.na(HISTOPA_N) & HISTOPA_N != 4),
+            IMUNOH_N = sum(!is.na(IMUNOH_N) & IMUNOH_N != 4))
+
+exams <-  data.frame(var= colnames(exams), val= t(exams))
+
+ggplot(exams, aes( x=var, y=val))+
+  geom_bar(stat="identity",aes(reorder(var, val), val))+
+  ggtitle("Frequency of each lab exam performed for chikungunya cases in 2017")+
+  xlab("Exams")+
+  theme(axis.text.x =element_text(angle=90,hjust=1,vjust=0.5))+
+  ylab("Count")
+```
+
+As can be seen, the CHIKS1 exam is by far the most used one, followed by PCR. The other exams are hardly used.
+
+#### Symptoms 
+
+There are a total of 15 possible symptoms. 
+
+```{r Chik_Symptoms}
+symptons <- c("FEBRE","MIALGIA","EXANTEMA","VOMITO","NAUSEA","DOR_COSTAS", "PETEQUIA_N", "LEUCOPENIA","LACO","DOR_RETRO","DIABETES","HEMATOLOG","HEPATOPAT", "RENAL", "HIPERTENSA") 
+
+symcount <- data.frame()
+for (i in 1: length(symptons)){
+  symcount[i,1] <- symptons[i]
+  symcount[i,2] <- chik17 %>% filter(chik17[symptons[i]] == 1) %>% count() 
+}
+
+ggplot(symcount, aes( x=V1, y=n))+
+  geom_bar(stat="identity",aes(reorder(V1, n), n))+
+  ggtitle("Frequency of symptoms in chikungunya cases in 2017")+
+  xlab("Symptoms")+
+  theme(axis.text.x =element_text(angle=90,hjust=1,vjust=0.5))+
+  ylab("Count")
+```
+
+As can be seen the most common symptom is fever with `r symcount[symcount$V1 == "FEBRE",2]` occurrences.
+
+#### Evolution of case
+
+Finally, the variable **EVOLUCAO** defines the outcome of each chikungunya case.
+```{r Chik_Evolution}
+classi <- chik17 %>% 
+   mutate(
+     EVOLUCAO = as.factor(case_when(EVOLUCAO == 1 ~ "Cured",
+                                    EVOLUCAO == 2 ~ "Death by \nillness",
+                                    EVOLUCAO == 3 ~ "Death by \nother cause",
+                                    EVOLUCAO == 4 ~ "Death under \ninvestigation",
+                                    EVOLUCAO == 9 ~ "Ignored",
+                                    TRUE ~ "NA")))
+
+ggplot(classi, aes(x=EVOLUCAO))+
+  geom_bar()+
+  ggtitle("Final outcomes of chikungunya cases in 2017")+
+  xlab("Category")+
+  ylab("Count")
+```
+
+The overwhelming majority is cured from chikungunya. However, `r chik17 %>% filter(EVOLUCAO == 2 | EVOLUCAO == 3 | EVOLUCAO == 4) %>% count()` people died during their chikungunya infection, although only `r chik17 %>% filter(EVOLUCAO == 2) %>% count()` of those died because of chikungunya.
+
+# Timeline of chikungunya cases
+
+#### Notification distribution throughout the year
+
+In the dataset, you can find many dates, one of the most important might be the notification date **DT_NOTIF**. This is the first time that a potential chikungunya patient contacts the medical authorities.
+Below the annual distribution of notifications during 2017 can be seen. There is a clear seasonal variation, with the peak presenting itself during March-June.
+
+```{r Chik_Notication}
+hist_NotiDate <- hist(chik17$DT_NOTIF, 
+                      "weeks",
+                      main= "Distribution of chikungunya Notifications in 2017",
+                      xlab = "Time",
+                      ylab = "Density")
+```
+
+#### Duration of each chikungunya case
+
+Once the initial notification happens, the timeline of each case starts. The duration of the complete process is delimited by the "closing date" (defined by **DT_ENCERRA**). Below is a histogram to see the duration of each chikungunya case. 
+
+```{r Chik_Duration}
+dura <- as.numeric(chik17$DT_ENCERRA - chik17$DT_NOTIFIC)
+hist(dura[dura<100], breaks = seq(min(dura, na.rm=TRUE), 100,1))
+```
+
+
+#### Timeline of all other events
+
+First, symptoms occur (**DT_SIN_PRI**, **DT_ALRM** and/or **DT_GRAV**). Once the doctor notified a chikungunya suspicion (**DT_NOTIF**) the case needs to be confirmed, this can be through through clinical epidemiological or through exams (PRNT, RT-PCR, NS1, etc). If the course of the disease is severe the date hospitalization (**DT_HOSP**) and, possibly, the date of death (**DT_OBITO**) must be recorded, too. Finally, there should be a closing date (**DT_ENCERRA**). Below are boxplots for each of the events.
+
+```{r Chik_Timeline}
+time <- data.frame(SYMP = as.numeric(chik17$DT_SIN_PRI - chik17$DT_NOTIFIC),
+                   INVE = as.numeric(chik17$DT_INVEST - chik17$DT_NOTIFIC),
+                   CHIK1 = as.numeric(chik17$DT_CHIK_S1 - chik17$DT_NOTIFIC),
+                   CHIK2 = as.numeric(chik17$DT_CHIK_S2 - chik17$DT_NOTIFIC),
+                   NS1 = as.numeric(chik17$DT_NS1 - chik17$DT_NOTIFIC), # 2
+                   PCR = as.numeric(chik17$DT_PCR - chik17$DT_NOTIFIC),
+                   SORO = as.numeric(chik17$DT_SORO - chik17$DT_NOTIFIC), #20
+                   VIRA = as.numeric(chik17$DT_VIRAL - chik17$DT_NOTIFIC),
+                   DEAD = as.numeric(chik17$DT_OBITO - chik17$DT_NOTIFIC),
+                   TOTAL = as.numeric(chik17$DT_ENCERRA - chik17$DT_NOTIFIC))
+long <- gather(time, TYPE, DAYS, SYMP:TOTAL)
+
+ggplot(long, aes(x=TYPE, y=DAYS))+
+  geom_boxplot()+
+  coord_cartesian(ylim = c(-100, 100))+
+  xlab("Event")+ ylab("Days from the notification day")
+```
+
+<img src="../Images/flash.jpg" alt="drawing" width="15"/> Most dates should fall within a few days before the notification day or within two months after it. However, looking at the boxplots, this is clearly not the case. If one wants to work with the timeline of chikungunya cases, these erroneous cases need to be removed.
+
+
+# Spatial component
+There is of course also  spatial data in the data sets. Before diving in deeper it is necessary to download the shapefiles of Brazils municipalities. This can be done via the *geobr* package. However, the municipality code given by geobr is one digit too long and has to be shortened to 6 digits.
+
+```{r  Chik_LoadMuni, message=FALSE, warning=FALSE}
+muni <- read_municipality(code_muni="all", year=2015, showProgress = FALSE) 
+muni$code_muni <- str_sub(muni$code_muni, end=6)
+```
+
+In total, the dataset refers to 4 different locations:
+
+  * **ID_MUNICIP** is the municipality where the case is recorded.
+  * **ID_MN_RESI** is the municipality of residence of the patient.
+  * **COMUNINF** is the probable municipality of infection.
+  * **MUNICIPIO** is the municipality of the hospital (if hospitalized).
+  
+```{r  Chik_Plot, message=FALSE, warning=FALSE}
+noti <- as.data.frame(table(chik17$ID_MUNICIP , dnn=list("code_muni")), responseName = "noti_muni")      
+infec <- as.data.frame(table(chik17$COMUNINF , dnn=list("code_muni")), responseName = "infec_muni")       
+resi <- as.data.frame(table(chik17$ID_MN_RESI , dnn=list("code_muni")), responseName = "resi_muni")      
+hosp <- as.data.frame(table(chik17$MUNICIPIO , dnn=list("code_muni")), responseName = "hosp_muni")       
+
+allmuni <- left_join(muni, noti) %>%
+  left_join(., infec) %>%
+  left_join(., resi) %>%
+  left_join(.,hosp)
+   
+cols <- c("green", "yellow","orange","red", "black")
+breaks <- c(0,10,100,1000,1000,100000)
+noti <- ggplot(allmuni) + 
+  ggtitle("chikungunya notification per municipality")+
+  geom_sf( aes(fill=noti_muni), size=.15, show.legend = TRUE) + 
+  scale_fill_stepsn(breaks = breaks,
+                    colours = cols,
+                    values= scales::rescale(breaks))
+
+infec <- ggplot(allmuni) + 
+  ggtitle("Probable chikungunya infections per municipality")+
+  geom_sf( aes(fill=infec_muni), size=.15, show.legend = TRUE)  + 
+  scale_fill_stepsn(breaks = breaks,
+                    colours = cols,
+                    values= scales::rescale(breaks))
+
+resi <- ggplot(allmuni) + 
+  ggtitle("Residents with chikungunya per municipality")+
+  geom_sf( aes(fill=resi_muni), size=.15, show.legend = TRUE)  + 
+  scale_fill_stepsn(breaks = breaks,
+                    colours = cols,
+                    values= scales::rescale(breaks))
+
+hosp <- ggplot(allmuni) + 
+  ggtitle("chikungunya hospitalizations per municipality")+
+  geom_sf( aes(fill=hosp_muni), size=.15, show.legend = TRUE)  + 
+  scale_fill_stepsn(breaks = breaks,
+                    colours = cols,
+                    values= scales::rescale(breaks))
+
+#using the patchwork library, the plots can be displayed next to each other
+(noti+infec)/(resi+hosp)
+```
+
+Depending on what the aim of the study is, each of these variables can be important. E.g. 
+
+
+# Other: Calculate the incidence
+
+Sometimes, having the absolute values is helpful. But other times, the number of chikungunya cases are highly dependent on the number of inhabitants and then the incidence is used. The incidence describes how many chikungunya cases there occurred per 1.000 inhabitants.
+
+For this, the population data needs to be loaded, its municipal code adjusted and merged to the malaria data.
+
+```{r  Chik_LoadPopulation, message=FALSE, warning=FALSE}
+pop <- read.csv(paste0("https://sidra.ibge.gov.br/geratabela?format=us.csv&name=tabela6579.csv&terr=NC&rank=-&query=t/6579/n6/all/v/all/p/2015/l/v,p,t"), header=F, sep=",")
+names(pop) <- c("code_muni", "muni_name","pop")
+pop <- pop[-(1:4),]
+pop <- pop[1:5570,]
+pop <- pop[,c("code_muni","pop")]
+pop$code_muni <-  str_sub(pop$code_muni, end=6)
+allmuni <-  left_join(allmuni, pop)
+allmuni$pop <- as.numeric(allmuni$pop)
+```
+
+The incidence is then calculated by dividing the chikungunya cases by the population of each municipality and multiplicating by 1000.
+
+``` {r Chik_Incidence}
+allmuni$noti_inc <- allmuni$noti_muni / allmuni$pop*1000
+allmuni$infec_inc <- allmuni$infec_muni / allmuni$pop*1000
+allmuni$resi_inc <- allmuni$resi_muni / allmuni$pop*1000
+allmuni$hosp_inc <- allmuni$hosp_muni / allmuni$pop*1000
+
+
+
+breaks2 <- c(0,5,25,50,1000, 8000)
+noti_inc <- ggplot(allmuni) + 
+  ggtitle("Incidence of chikungunya notifications in 2017")+
+  geom_sf( aes(fill=noti_inc), size=.15, show.legend = TRUE)  + 
+  scale_fill_stepsn(breaks = breaks2,
+                    colours = cols,
+                    values= scales::rescale(breaks2))
+infec_inc <- ggplot(allmuni) + 
+  ggtitle("Incidence of probable chikungunya infections in 2017")+
+  geom_sf( aes(fill=infec_inc), size=.15, show.legend = TRUE)  + 
+  scale_fill_stepsn(breaks = breaks2,
+                    colours = cols,
+                    values= scales::rescale(breaks2))
+resi_inc <- ggplot(allmuni) + 
+  ggtitle("Incidence of residents with chikungunya in 2017")+
+  geom_sf( aes(fill=resi_inc), size=.15, show.legend = TRUE)  + 
+  scale_fill_stepsn(breaks = breaks2,
+                    colours = cols,
+                    values= scales::rescale(breaks2))
+hosp_inc <- ggplot(allmuni) + 
+  ggtitle("Incidence of chikungunya hospitalizations in 2017")+
+  geom_sf( aes(fill=hosp_inc), size=.15, show.legend = TRUE) + 
+  scale_fill_stepsn(breaks = breaks2,
+                    colours = cols,
+                    values= scales::rescale(breaks2))
+
+(noti_inc+infec_inc)/(resi_inc+hosp_inc)
+```
+
