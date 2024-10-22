@@ -1,0 +1,50 @@
+{
+  "about.qmd": {
+    "about.html": "371dd850"
+  },
+  "index.qmd": {
+    "index.html": "f01d9346"
+  },
+  "brazil.qmd": {
+    "brazil.html": "17c8beab"
+  },
+  "brazil_dengue.qmd": {
+    "brazil_dengue.html": "ced0229f"
+  },
+  "ui_tool.qmd": {
+    "ui_tool.html": "5bce47e0"
+  },
+  "colombia_dengue.qmd": {
+    "colombia_dengue.html": "c07d72d2"
+  },
+  "domrep_malaria.qmd": {
+    "domrep_malaria.html": "7d40df44"
+  },
+  "domrep.qmd": {
+    "domrep.html": "76f5b75f"
+  },
+  "peru_dengue.qmd": {
+    "peru_dengue.html": "b855faef"
+  },
+  "colombia.qmd": {
+    "colombia.html": "d6265363"
+  },
+  "peru.qmd": {
+    "peru.html": "8e010944"
+  },
+  "domrep_dengue.qmd": {
+    "domrep_dengue.html": "9dc9f978"
+  },
+  "brazil_SINAN_SIVEP.qmd": {
+    "brazil_SINAN_SIVEP.html": "4f70f2ee"
+  },
+  "brazil_download_data.qmd": {
+    "brazil_download_data.html": "a1a61b30"
+  },
+  "reports.qmd": {
+    "reports.html": "980e16a2"
+  },
+  "brazil_malaria.qmd": {
+    "brazil_malaria.html": "5ced10d7"
+  }
+}

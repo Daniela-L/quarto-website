@@ -1,0 +1,123 @@
+project:
+  type: website
+  output-dir: public
+
+website:
+  favicon: images/harmonize_logo.png
+  page-footer: 
+    left: "Daniela Lührsen, HARMONIZE" 
+    right: 
+      - icon: github
+        href: https://github.com/
+        target: _blank
+      - icon: twitter 
+        href: https://twitter.com/ 
+        target: _blank
+  announcement: 
+    icon: info-circle
+    dismissable: true
+    content: "**Alert** - The person reading this announcement is very pretty."
+    type: primary
+    position: below-navbar
+  title: "data4health"
+  navbar:
+    background: primary
+    search: true
+    left:
+      - text: Home
+        href: index.qmd
+      - href: about.qmd
+        text: About
+      - sidebar:instructions
+      - sidebar:reports
+      - href: ui_tool.qmd
+        text: "No-coding tool"
+      
+  sidebar:
+    - id: instructions
+      title: "Instructions"
+      background: light
+      collapse-level: 1
+      contents:
+      - sections:
+        text: Brazil
+        href: brazil.qmd
+        contents: 
+          - href: brazil_download_data.qmd
+            text: Download data
+          - href: brazil_dengue.qmd
+            text: Dengue
+          - href: brazil_malaria.qmd
+            text: Malaria
+      - sections:
+        text: Colombia
+        href: colombia.qmd
+        contents: 
+          - href: colombia_lepto.qmd
+            text: Leptospirosis
+          - href: colombia_dengue.qmd
+            text: Dengue
+      - sections:
+        text: Dominican Republic
+        href: domrep.qmd
+        contents: 
+          - href: domrep_malaria.qmd
+            text: Malaria
+          - href: domrep_dengue.qmd
+            text: Dengue
+      - sections:
+        text: Peru
+        href: peru.qmd
+        contents: 
+          - href: peru_dengue.qmd
+            text: Dengue
+    - id: reports
+      title: "Reports"
+      collapse-level: 1
+      text: Reports
+      href: reports.qmd
+      contents:
+      - sections:
+        text: Brazil
+        href: brazil.qmd
+        contents: 
+          - href: brazil_report_public.qmd
+            text: General public report
+          - href: brazil_report_technical.qmd
+            text: Technical report
+      - sections:
+        text: Colombia
+        href: colombia.qmd
+        contents: 
+          - href: colombia_report_public.qmd
+            text: General public report
+          - href: colombia_report_technical.qmd
+            text: Technical report
+      - sections:
+        text: Dominican Republic
+        href: domrep.qmd
+        contents: 
+          - href: domrep_report_public.qmd
+            text: General public report
+          - href: domrep_report_technical.qmd
+            text: Technical report
+      - sections:
+        text: Peru
+        href: peru.qmd
+        contents: 
+          - href: peru_report_public.qmd
+            text: General public report
+          - href: peru_report_technical.qmd
+            text: Technical report
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    link-external-newwindow: true
+    
+
+
+editor: visual
+

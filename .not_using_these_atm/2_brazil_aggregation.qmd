@@ -1,0 +1,139 @@
+---
+title: "Aggregation Functions"
+author: "Daniela Luhrsen, Rachel Lowe and Raquel Lana"
+date: "2022-11-16"
+output: github_document
+---
+
+In the following, the functions from "2_AggregationFunctions.R", which aggregate and plot health data, will be explained. In total, there are 5 functions:
+
+  1. Download data from SINAN
+  2. Clean the data by fixing age and unifying column names
+  3. Aggregating the data
+  4. Plot a map
+  5. Plot a time series
+  
+Some of these functions require additional data (population, shapefiles, etc.). If you do not have the data, you can use the *0_DownloadData.md* instructions.
+  
+Load the functions:
+```{r, eval = FALSE}
+library(learnr)
+files.sources <-  list.files("R/")
+sapply(paste0("R/",files.sources), source)
+options(timeout = 2000)
+```
+
+In this script, many files will be created, which, because of their large volume, should not be uploaded to Gitlab. To prevent this, you can specify folders or file extensions that should not be uploaded in the **.gitignore** file. In this case, we introduced  *Data/\** and *\*.dbf*.
+
+
+**1. Download data from SINAN**
+
+  * disease		(required) name of disease. E.g. “dengue”, “malaria”, etc.
+  * iyear 		(required) initial year of data request. E.g. 2014
+  * fyear		  (required) final year of data request. E.g. 2015
+  * outfile		(optional) (defaults to disease_iyear_fyear) name of output file, including a possible path. E.g. “Data/malaria”
+
+```{r, eval = FALSE, exercise = TRUE}
+download_data(disease = "dengue", iyear = 2014, fyear = 2014, outfile = "Data/Disease/Dengue/dengue_2014_raw")
+
+download_data(disease = "malaria", iyear = 2014, fyear = 2016, outfile = "Data/Disease/Malaria/malaria_2014_2016_raw")
+```
+
+ **2. Clean the data by fixing age, dates und unifying column names**
+
+  * infiles		(required) name of input files, including a possible path.
+  * outfiles	(required) name of output file, including a possible path.
+
+<!--- I think the best here is to save in csv than dbf. 
+DL: saving it in dbf is much much much faster than csv.--->
+
+```{r, eval = FALSE}
+clean_data(infiles = "Data/Disease/Dengue/dengue_2014_raw.dbf", outfiles = "Data/Disease/Dengue/dengue_2014_cleaned")
+
+clean_data(infiles = "Data/Disease/Malaria/malaria_2014_2016_raw.dbf", outfiles = "Data/Disease/Malaria/malaria_2014_2016_cleaned") 
+```
+
+ **3. Aggregating the data**
+
+  * infile	(required) name of input files, including a possible path.
+  * gender	(optional) (defaults to NULL) Should the data be separated into genders? "F","I","M","all"
+  * age		  (optional) (defaults to NULL) Should the data split into age groups? E.g. c(0,5,10,15,100)
+  * itime		(required) What should the initial year be? E.g. 2014
+  * ftime		(required) What should the final year be? E.g. 2015
+  * timetype	(optional) (defaults to “noti”) Which date should be taken into account: first symptoms or notification. “sym” “noti”
+  * tunit		(optional) (defaults to “week”) To what time units should the data be aggregated? 		“week”, “month”, “year”
+  * sunit		(optional) (defaults to “MUNI”) Should the result be given per municipality or UF? 		“MUNI”, “UF”
+  * sloc		(optional) (defaults to NULL) Select the spatial boundaries, either "all", "amazon" or the area code.  
+  * amazon_file (optional) Required only if sloc = "amazon". csv file with municipality numbers as rows.
+  * spacetype	(optional) (defaults to “N”) What location should be taken into account? Notification, Residence, Hospitalization or Infection. “N”,”R”, “H”, “I”
+  * crit		(optional) (defaults to “both”) only cases confirmed by laboratory “lab”, only cases confirmed by clinical “clin”, cases confirmed by either method “both”, use all suspected cases “sus”
+  * output  (required) name of output files, including a possible path.
+  
+
+```{r, eval = FALSE}
+aggregate_data(infile = "Data/Disease/Dengue/dengue_2014_cleaned.dbf", itime = 2014, ftime = 2014, sloc = "all", tunit = "week", sunit = "UF", spacetype = "N", timetype = "noti", crit = "both", age = c(0, 25, 50, 100, 125), gender = "all", output = "Data/Disease/Dengue/dengue_2014_aggregated.dbf")
+
+aggregate_data(infile = "Data/Disease/Malaria/malaria_2014_2016_cleaned.dbf", itime = 2014, ftime = 2015, sloc = "all", tunit = "month", sunit = "MUNI", spacetype = "N", timetype = "noti", crit = "sus", gender = "F", output = "Data/Disease/Malaria/malaria_2014_2016_aggregated.dbf")
+```
+
+<!--- I think here is important to show how the variables are in the aggregated database. Maybe using summary(), or head().
+To aggregate in week, are you using epidemiological week in Latin America pattern? Starting on Sunday and ending on Saturday. 
+Add the names for municipalities and states.
+Add the names of the categories for RACE, CLASS, and CRIT - we discuss better and evaluate it. 
+--->
+
+
+ **4. Plot a map**
+
+  * infile		(required) name of (cleaned) file, including its path. E.g. “Data/Cleaned_data.dbf”
+  * popdata   (optional) Required only when type = "inc". File with population data per municipality. E.g. "Data/pop2015.csv"
+  * UF_shp    (optional) Required if the spatial aggregation is in UF. File with UF borders. E.g. "Data/Shapefiles_WGS84/BR_UF_2021.shp"
+  * muni_shp    (optional) Required if the spatial aggregation is in municipalities. File with municipalities borders. E.g. "Data/Shapefiles_WGS84/BR_Municipios_2021.shp"
+  * type		  (optional) (defaults to “abs”) Plot absolute cases or the incidence. “abs”, “inc”
+  * incidence (optional) (defaults to 1000). Only used if type=inc. What should be the base incidence? 
+  * age       (optional) (defaults to NULL) WHat age group should be plotted?
+  * gender    (optional) (defaults to NULL) What gender should be plotted? 'F','M', 'I','all'
+  * timestep  (required) Should the data be averaged over time o what timestep should be plotted? "sum" or timestep e.g. "02-2014"
+  * outfile   (optional) Path, name and ".png" of saved image, e.g. "Output/plot.png"
+
+ 
+```{r, eval = FALSE}
+plot_map(infile = "Data/Disease/Dengue/dengue_2014_aggregated.dbf", 
+         popdata = "Data/Demographic/pop_2015.csv", 
+         UF_shp = "Data/Maps/BR_UF.shp", type = "inc", 
+         age = "0-25", gender = "F", timestep = "02-2014")
+
+plot_map(infile = "Data/Disease/Malaria/malaria_2014_2016_aggregated.dbf", 
+         muni_shp = "Data/Maps/BR_muni.shp", type = "abs", 
+         gender = "F", timestep = "sum", outfile= "Figure/malaria_2014_2016_plot.png") 
+```
+
+
+**5. Plot a timeseries**
+
+  * infile		    (required) name of (cleaned) file, including its path. E.g. “Data/Cleaned_data.dbf”
+  * comparison	 (required) what groups should be in the plot. Location “L”, Age “A”, Gender “G”, None “N”
+	* area		      (optional) (defaults to “all”) Select the codes that you want to see. E.g. c(“11”,”12”)
+	* timestep	    (optional) (defaults to “all”)
+	* age		        (optional) (defaults to “all”) Select the age groups you want to see or “all”. E.g. c(“0-20”, “20-100”)
+	* gender		    (optional) defaults to “all”) Select the gender you want to see. “M”,”F” or ”I”.
+	* title         (optional) title of the plot
+
+
+```{r, eval = FALSE}
+plot_ts(infile = "Data/Disease/Dengue/dengue_2014_aggregated.dbf", comparison = "A") # Good to reorder the legend (write something general to always order from the minor to the maximum.) and put the axis X in the vertical to avoid the mix of the numbers. Or add an argument in the function that allow few editions in the plot.
+plot_ts(infile = "Data/Disease/Dengue/dengue_2014_aggregated.dbf", comparison = "A", age = ("25-50"))
+plot_ts(infile = "Data/Disease/Dengue/dengue_2014_aggregated.dbf", comparison = "A", timestep = c("01-2014", "02-2014", "03-2014", "04-2014", "05-2014", "06-2014"))
+plot_ts(infile = "Data/Disease/Dengue/dengue_2014_aggregated.dbf", comparison = "A", timestep = paste0(sprintf("%02d", seq(1, 6, 1)), "-2014"))
+plot_ts(infile = "Data/Disease/Dengue/dengue_2014_aggregated.dbf", comparison = "G") # Is it possible to select just 1 or 2 categories?
+plot_ts(infile = "Data/Disease/Dengue/dengue_2014_aggregated.dbf", comparison = "L") # a good option here is to plot a figure with 27 time series by state using the geolocation. Have you used it before? Here is an example: 
+#arbo.ag %>% ggplot(aes(x = DATE, y = CASES, color = Arbovirose)) + geom_point() + 
+#  facet_geo(~UF_ACR, grid = "br_states_grid1", scales = "free_y") + theme_bw() 
+plot_ts(infile = "Data/Disease/Dengue/dengue_2014_aggregated.dbf", comparison = "L", area = c("31", "32", "33"))
+plot_ts(infile = "Data/Disease/Dengue/dengue_2014_aggregated.dbf", comparison = "A", area = c("31", "32", "33"))
+# Another good thing is to do a function to insert the names of the states and municipalities. 
+plot_ts(infile = "Data/Disease/Dengue/dengue_2014_aggregated.dbf", comparison = "A")
+plot_ts(infile = "Data/Disease/Malaria/malaria_2014_2016_aggregated.dbf", comparison = "N", title = "Malaria cases in 2014")
+```
+
+
