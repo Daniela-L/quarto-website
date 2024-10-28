@@ -26,6 +26,30 @@ Along the way, each topic will be divided into 3:
 
 -   ![](images/filter-01.png){width="20"} indicates that there is a opportunity to filter data (if necessary).
 
+# Setting up the R environment
+
+![](images/idea-02.png){width="25"} In every R script,
+
+In this script we will need the following R-scripts:
+
+-   microdatasus: To download the health data from brazil
+
+-   dplyr:
+
+-   purrr:
+
+-   ggplot2: to create the graphs
+
+-   tidyr:
+
+-   lubridate: to help format the dates
+
+-   geobr: to download the shapefiles of brazils
+
+-   stringr:
+
+Other options that are being set up now include, setting a maximum waiting time for functions (i.e. timeout), how large number should be displayed (i.e. scipen) and functions are locally loaded.
+
 ```{r message=FALSE, warning=FALSE}
 # load packages
 packages  <- c("microdatasus", "dplyr", "purrr", "ggplot2","tidyr", 
@@ -44,7 +68,7 @@ invisible(sapply(paste0("R/", files.sources), source))
 
 # Downloading the data
 
-As described in the **0_DownloadData** file, the health data from Brazil can be downloaded in many different ways. Here, it is downloaded with the help of the package *microdatasus*. The following code block will download the data for the year 2014 (which was chosen randomly).
+As described in the [download data - instructions](brazil_download_data.qmd), the health data from Brazil can be downloaded in many different ways. Here, it is downloaded with the help of the package *microdatasus*. The following code block will download the data for the year 2014 (which was chosen randomly).
 
 ```{r Malaria_LoadData, message = FALSE, warning = FALSE}
 # malariaData <- fetch_datasus(year_start = 2014, year_end = 2014, information_system = "SINAN-MALARIA")
@@ -82,7 +106,6 @@ malariaData <- malariaData %>% select(all_of(sel_var))
 ![](images/idea-02.png){width="25"} Some of these variables are mandatory to notify, others are not, which leads to incomplete datasets. The chart **NACountChart** shows the the variables which have NA-values and the percentage of NAs they contain.
 
 ```{r Malaria_NAs}
-# get count of NA for each variable
 NACount <- malariaData %>% map(~mean(is.na(.)))
 NACount <- data.frame(count=unlist(NACount),
                       var=names(NACount))
@@ -438,7 +461,7 @@ The boxplot is able to visualize possible outliers:
 
 ### *Notification, Residence & Probable Infection*
 
-There is of course also spatial data in the data sets. Before diving in deeper it is necessary to download the shapefiles of Brazil municipalities. This can be done via the *geobr* package. However, the municipality code given by geobr is one digit too long and has to be shortened to 6 digits.
+![](images/idea-02.png){width="25"} There is of course also spatial data in the data sets. Before diving in deeper it is necessary to download the shapefiles of Brazil municipalities. This can be done via the *geobr* package. However, the municipality code given by geobr is one digit too long and has to be shortened to 6 digits.
 
 In total, the dataset refers to 3 different locations:
 
@@ -447,39 +470,39 @@ In total, the dataset refers to 3 different locations:
 -   **COMUNINF** is the municipality the patient probably got the infection.
 
 ```{r Malaria_LoadMuni, message=FALSE, warning=FALSE}
-muni <- read_municipality(code_muni = "all", year = 2014, showProgress = FALSE) %>%
-  mutate(code_muni = str_sub(code_muni, end = 6)) %>%
-  left_join(as.data.frame(table(malariaData$ID_MUNICIP, dnn = list("code_muni")), responseName = "noti_muni")) %>%
-  left_join(as.data.frame(table(malariaData$COMUNINF, dnn = list("code_muni")), responseName = "infec_muni")) %>%
-  left_join(as.data.frame(table(malariaData$ID_MN_RESI, dnn = list("code_muni")), responseName = "resi_muni"))
+# muni <- read_municipality(code_muni = "all", year = 2014, showProgress = FALSE) %>%
+#   mutate(code_muni = str_sub(code_muni, end = 6)) %>%
+#   left_join(as.data.frame(table(malariaData$ID_MUNICIP, dnn = list("code_muni")), responseName = "noti_muni")) %>%
+#   left_join(as.data.frame(table(malariaData$COMUNINF, dnn = list("code_muni")), responseName = "infec_muni")) %>%
+#   left_join(as.data.frame(table(malariaData$ID_MN_RESI, dnn = list("code_muni")), responseName = "resi_muni"))
 ```
 
 Depending on what the aim of the study is, each of these variables can be important.
 
 ```{r Malaria_plot, message = FALSE, warning = FALSE}
-cols <- c("green", "yellow","orange","red", "black") #change these as needed
-breaks <- c(0, 10, 100, 1000, 10000, 100000) #change these as needed
-
-ggplot(muni) +
-  ggtitle("Extra-Amazon malaria per municipality of notification") +
-  geom_sf( aes(fill = noti_muni), size = .15, show.legend = TRUE) +
-  scale_fill_stepsn(breaks = breaks,
-                    colours = cols,
-                    values = scales::rescale(breaks))
-
-ggplot(muni) +
-  ggtitle("Extra-Amazon malaria per municipality of probable infection") +
-  geom_sf(aes(fill = infec_muni), size = .15, show.legend = TRUE)  +
-  scale_fill_stepsn(breaks = breaks,
-                    colours = cols,
-                    values = scales::rescale(breaks))
-
-ggplot(muni) +
-  ggtitle("Extra-Amazon malaria per municipality of residence")+
-  geom_sf( aes(fill = resi_muni), size = .15, show.legend = TRUE)  +
-  scale_fill_stepsn(breaks = breaks,
-                    colours = cols,
-                    values = scales::rescale(breaks))
+# cols <- c("green", "yellow","orange","red", "black") #change these as needed
+# breaks <- c(0, 10, 100, 1000, 10000, 100000) #change these as needed
+# 
+# ggplot(muni) +
+#   ggtitle("Extra-Amazon malaria per municipality of notification") +
+#   geom_sf( aes(fill = noti_muni), size = .15, show.legend = TRUE) +
+#   scale_fill_stepsn(breaks = breaks,
+#                     colours = cols,
+#                     values = scales::rescale(breaks))
+# 
+# ggplot(muni) +
+#   ggtitle("Extra-Amazon malaria per municipality of probable infection") +
+#   geom_sf(aes(fill = infec_muni), size = .15, show.legend = TRUE)  +
+#   scale_fill_stepsn(breaks = breaks,
+#                     colours = cols,
+#                     values = scales::rescale(breaks))
+# 
+# ggplot(muni) +
+#   ggtitle("Extra-Amazon malaria per municipality of residence")+
+#   geom_sf( aes(fill = resi_muni), size = .15, show.legend = TRUE)  +
+#   scale_fill_stepsn(breaks = breaks,
+#                     colours = cols,
+#                     values = scales::rescale(breaks))
 ```
 
 **What did you find after see the maps?** Take a look of the difference between the Extra-Amazon malaria by municipality of notification and probable infection. Almost all malaria notified in the Extra-Amazon region was acquired in the Amazon region. Some people live in the Amazon region were notified in the Extra-Amazon region.
@@ -489,32 +512,32 @@ ggplot(muni) +
 If one wants to map them distinguishing by type, the following code can be used:
 
 ```{r Malaria_plotType, message = FALSE, warning = FALSE}
-muni <- muni %>%
-  left_join(as.data.frame(table(malariaData$ID_MUNICIP[malariaData$RES_EXAM == "V"], dnn = list("code_muni")), responseName = "vivax_muni")) %>%
-  left_join(as.data.frame(table(malariaData$ID_MUNICIP[malariaData$RES_EXAM == "F"], dnn = list("code_muni")), responseName = "falci_muni")) %>%
-  left_join(as.data.frame(table(malariaData$ID_MUNICIP[malariaData$RES_EXAM == "V+F"], dnn = list("code_muni")), responseName = "mixed_muni")) %>%
-  left_join(as.data.frame(table(malariaData$ID_MUNICIP[malariaData$RES_EXAM == "other"], dnn = list("code_muni")), responseName = "other_muni"))
-
-vivax_plot <- ggplot(muni) +
-  geom_sf( aes(fill = vivax_muni), size = .15, show.legend = TRUE) +
-  scale_fill_viridis_c() +
-  labs(subtitle = paste0("Number of P. vivax cases in Brazil 2015"), size = 8) +
-  theme_minimal()
-vivax_plot
-
-falci_plot <-  ggplot(muni) +
-  geom_sf( aes(fill = falci_muni), size = .15, show.legend = TRUE) +
-  scale_fill_viridis_c() +
-  labs(subtitle=paste0("Number of P. falciparum cases in Brazil 2015"), size = 8) +
-  theme_minimal()
-falci_plot
-
-mixed_plot <-  ggplot(muni) +
-  geom_sf( aes(fill = mixed_muni), size = .15, show.legend = TRUE) +
-  scale_fill_viridis_c() +
-  labs(subtitle=paste0("Number of mixed cases in Brazil 2015"), size = 8) +
-  theme_minimal()
-mixed_plot
+# muni <- muni %>%
+#   left_join(as.data.frame(table(malariaData$ID_MUNICIP[malariaData$RES_EXAM == "V"], dnn = list("code_muni")), responseName = "vivax_muni")) %>%
+#   left_join(as.data.frame(table(malariaData$ID_MUNICIP[malariaData$RES_EXAM == "F"], dnn = list("code_muni")), responseName = "falci_muni")) %>%
+#   left_join(as.data.frame(table(malariaData$ID_MUNICIP[malariaData$RES_EXAM == "V+F"], dnn = list("code_muni")), responseName = "mixed_muni")) %>%
+#   left_join(as.data.frame(table(malariaData$ID_MUNICIP[malariaData$RES_EXAM == "other"], dnn = list("code_muni")), responseName = "other_muni"))
+# 
+# vivax_plot <- ggplot(muni) +
+#   geom_sf( aes(fill = vivax_muni), size = .15, show.legend = TRUE) +
+#   scale_fill_viridis_c() +
+#   labs(subtitle = paste0("Number of P. vivax cases in Brazil 2015"), size = 8) +
+#   theme_minimal()
+# vivax_plot
+# 
+# falci_plot <-  ggplot(muni) +
+#   geom_sf( aes(fill = falci_muni), size = .15, show.legend = TRUE) +
+#   scale_fill_viridis_c() +
+#   labs(subtitle=paste0("Number of P. falciparum cases in Brazil 2015"), size = 8) +
+#   theme_minimal()
+# falci_plot
+# 
+# mixed_plot <-  ggplot(muni) +
+#   geom_sf( aes(fill = mixed_muni), size = .15, show.legend = TRUE) +
+#   scale_fill_viridis_c() +
+#   labs(subtitle=paste0("Number of mixed cases in Brazil 2015"), size = 8) +
+#   theme_minimal()
+# mixed_plot
 ```
 
 ### *Calculating the incidence*
@@ -524,70 +547,70 @@ Sometimes, having the absolute values is helpful. But other times, the number of
 For this, the population data needs to be loaded from [IBGE](https://www.ibge.gov.br/estatisticas/sociais/populacao/9103-estimativas-de-populacao.html?edicao=31451&t=resultados) either manually or using the local function "get_br_pop_data" (instructions can be viewed in 0_DownloadData.md).
 
 ```{r Malaria_LoadPopulation, message = FALSE}
-get_br_pop_data(2015, save=F)
-
-muni <-  left_join(muni, pop_2015[c("code_muni","pop")], by="code_muni")
-muni$pop <- as.numeric(muni$pop)
+# get_br_pop_data(2015, save=F)
+# 
+# muni <-  left_join(muni, pop_2015[c("code_muni","pop")], by="code_muni")
+# muni$pop <- as.numeric(muni$pop)
 ```
 
 The incidence is then calculated by dividing the malaria cases by the population of each municipality and multiplication by 1000.
 
 ```{r Malaria_Incidence, message = FALSE, warning = FALSE}
-muni$noti_inc <- muni$noti_muni / muni$pop*1000
-muni$infec_inc <- muni$infec_muni / muni$pop*1000
-muni$resi_inc <- muni$resi_muni / muni$pop*1000
-
-breaks2 <- c(0, 5, 25, 50, 100, 250)
-noti_inci_plot <- ggplot(muni) +
-  ggtitle("Incidence of malaria notifications in 2015")+
-  geom_sf( aes(fill = noti_inc), size = .15, show.legend = TRUE)  +
-  scale_fill_stepsn(breaks = breaks2,
-                    colours = cols,
-                    values = scales::rescale(breaks2))
-noti_inci_plot
-
-infe_inci_plot <- ggplot(muni) +
-  ggtitle("Incidence of probable malaria infections in 2015")+
-  geom_sf(aes(fill = infec_inc), size = .15, show.legend = TRUE)  +
-  scale_fill_stepsn(breaks = breaks2,
-                    colours = cols,
-                    values = scales::rescale(breaks2))
-infe_inci_plot
-
-resi_inci_plot <- ggplot(muni) +
-  ggtitle("Incidence of residents with malaria in 2015")+
-  geom_sf(aes(fill = resi_inc), size = .15, show.legend = TRUE)  +
-  scale_fill_stepsn(breaks = breaks2,
-                    colours = cols,
-                    values = scales::rescale(breaks2))
-resi_inci_plot
+# muni$noti_inc <- muni$noti_muni / muni$pop*1000
+# muni$infec_inc <- muni$infec_muni / muni$pop*1000
+# muni$resi_inc <- muni$resi_muni / muni$pop*1000
+# 
+# breaks2 <- c(0, 5, 25, 50, 100, 250)
+# noti_inci_plot <- ggplot(muni) +
+#   ggtitle("Incidence of malaria notifications in 2015")+
+#   geom_sf( aes(fill = noti_inc), size = .15, show.legend = TRUE)  +
+#   scale_fill_stepsn(breaks = breaks2,
+#                     colours = cols,
+#                     values = scales::rescale(breaks2))
+# noti_inci_plot
+# 
+# infe_inci_plot <- ggplot(muni) +
+#   ggtitle("Incidence of probable malaria infections in 2015")+
+#   geom_sf(aes(fill = infec_inc), size = .15, show.legend = TRUE)  +
+#   scale_fill_stepsn(breaks = breaks2,
+#                     colours = cols,
+#                     values = scales::rescale(breaks2))
+# infe_inci_plot
+# 
+# resi_inci_plot <- ggplot(muni) +
+#   ggtitle("Incidence of residents with malaria in 2015")+
+#   geom_sf(aes(fill = resi_inc), size = .15, show.legend = TRUE)  +
+#   scale_fill_stepsn(breaks = breaks2,
+#                     colours = cols,
+#                     values = scales::rescale(breaks2))
+# resi_inci_plot
 ```
 
 If one wants to know the incidence depending on the malaria type:
 
 ```{r Malaria_TypeIncidence}
-muni$vivax_inc <- muni$vivax_muni / muni$pop*1000
-muni$falci_inc <- muni$falci_muni / muni$pop*1000
-muni$mixed_inc <- muni$mixed_muni / muni$pop*1000
-
-vivax_inci_plot <- ggplot(muni) +
-  geom_sf(aes(fill = vivax_inc), size = .15, show.legend = TRUE) +
-  scale_fill_viridis_c() +
-  labs(subtitle = paste0("Vivax incidence in Brazil 2015"), size = 8) +
-  theme_minimal()
-vivax_inci_plot
-
-falci_inci_plot<- ggplot(muni) +
-  geom_sf( aes(fill = falci_inc), size = .15, show.legend = TRUE) +
-  scale_fill_viridis_c()+
-  labs(subtitle = paste0("Falciparum incidence in Brazil in 2015"), size = 8) +
-  theme_minimal()
-falci_inci_plot
-
-mixed_inci_plot<- ggplot(muni) +
-  geom_sf( aes(fill = mixed_inc), size = .15, show.legend = TRUE) +
-  scale_fill_viridis_c()+
-  labs(subtitle = paste0("Mixed incidence in Brazil in 2015"), size = 8) +
-  theme_minimal()
-mixed_inci_plot
+# muni$vivax_inc <- muni$vivax_muni / muni$pop*1000
+# muni$falci_inc <- muni$falci_muni / muni$pop*1000
+# muni$mixed_inc <- muni$mixed_muni / muni$pop*1000
+# 
+# vivax_inci_plot <- ggplot(muni) +
+#   geom_sf(aes(fill = vivax_inc), size = .15, show.legend = TRUE) +
+#   scale_fill_viridis_c() +
+#   labs(subtitle = paste0("Vivax incidence in Brazil 2015"), size = 8) +
+#   theme_minimal()
+# vivax_inci_plot
+# 
+# falci_inci_plot<- ggplot(muni) +
+#   geom_sf( aes(fill = falci_inc), size = .15, show.legend = TRUE) +
+#   scale_fill_viridis_c()+
+#   labs(subtitle = paste0("Falciparum incidence in Brazil in 2015"), size = 8) +
+#   theme_minimal()
+# falci_inci_plot
+# 
+# mixed_inci_plot<- ggplot(muni) +
+#   geom_sf( aes(fill = mixed_inc), size = .15, show.legend = TRUE) +
+#   scale_fill_viridis_c()+
+#   labs(subtitle = paste0("Mixed incidence in Brazil in 2015"), size = 8) +
+#   theme_minimal()
+# mixed_inci_plot
 ```
