@@ -1,5 +1,5 @@
 ---
-title: "1b_DengueData"
+title: "Preprocessing Dengue Data"
 author: "Daniela Luhrsen, Rachel Lowe and Raquel Lana"
 date: "2022-10-27"
 output: github_document
@@ -17,14 +17,14 @@ instructions on how to obtain these are in the ReadMe of this project.
 
 The steps include:
 
-0.  Downloading the data
-1.  Getting to know the data: detect differences between different datasets
-2.  Information on the patients: Age, Sex, Pregnancy, Race
-3.  Information ono the case: classification, confirmation criteria, dengue
+1.  Downloading the data
+2.  Getting to know the data: detect differences between different datasets
+3.  Information on the patients: Age, Sex, Pregnancy, Race
+4.  Information on the case: classification, confirmation criteria, dengue
     category, exam type, evolution of the case
-4.  Timeline of the dengue case: distribution throughout the year, duration of
+5.  Timeline of the dengue case: distribution throughout the year, duration of
     cases, course of the disease
-5.  Mapping spatially: Absolute cases, incidence
+6.  Mapping spatially: Absolute cases, incidence
 
 Along the way, each topic will be divided into 3:
 
@@ -36,15 +36,51 @@ Along the way, each topic will be divided into 3:
 -   ![](images/filter-01.png){width="20"} indicates that there is a opportunity
     to filter data (if necessary).
 
+# Setting up the R environment
+
+![](images/idea-02.png){width="25"} In every R script,
+
+In this script we will need the following R-scripts:
+
+-   microdatasus: To download the health data from brazil
+
+-   foreign: this function is used to read dbf files
+
+-   read.dbc: to open the files in .dbc format
+
+-   readr: to open csv files
+
+-   purrr:
+
+-   ggplot2: to create the graphs
+
+-   lubridate: to help format the dates
+
+-   geobr: to download the shapefiles of brazils administrative boundaries
+
+-   stringr: to support string modifications
+
+-   patchwork:
+
+-   knitr: to create interactive tables
+
+-   scales: to rescale continuous vectors to have limits
+
+-   dplyr & tidyr: to use functions from the "tidyverse"
+
+Other options that are being set up now include, setting a maximum waiting time
+for functions (i.e. timeout), how large numbers should be displayed (i.e.
+scipen) and functions are locally loaded.
+
 ```{r, warning= FALSE, message=FALSE}
 #load packages
-packages  <- c("tidyverse", "microdatasus", "foreign", "readr", "dplyr", "purrr",
-               "ggplot2","tidyr", "lubridate","geobr", "stringr", "patchwork",
-               "arsenal", "read.dbc")
+packages  <- c("microdatasus", "foreign", "read.dbc", "readr", "dplyr", "purrr",
+               "ggplot2","lubridate","geobr", "stringr", "patchwork",
+               "arsenal", "knitr", "scales", "tidyr")
 invisible(install.packages(setdiff(packages, rownames(installed.packages()))))
 invisible(lapply(packages, function(pkg) suppressMessages(require(pkg, character.only = TRUE))))
 
-# other options
+# set options
 options(scipen = 999)
 options(timeout = 2000)
 
@@ -56,26 +92,28 @@ invisible(sapply(paste0("R/", files.sources), source))
 
 # Download the data by microdatasus
 
-As described in the ReadMe, the health data from Brazil can be downloaded by
-many different methods: *microdatasus*, PySUS or by Filezilla [FTP
-link](ftp.datasus.gov.br). In this script, the data will be downloaded with the
-help of the package *microdatasus*, the following code block is an example that
-will download the data for the year 2015 and 2021. The dengue database is heavy
-and it can take time to download it. It is therefor recommended to download and
-save it before the analysis and to simply load the datasets once you do the
-analysis. (In the case of this script, run it once entirely, and then you can
-comment out the first code block to not download the same data over and over.)
+As described in the [download instructions](brazil_download_data.qmd), the
+health data from Brazil can be downloaded by many different methods:
+*microdatasus*, PySUS or by Filezilla [FTP link](ftp.datasus.gov.br). In this
+script, the data will be downloaded with the help of the package
+[*microdatasus*](https://rfsaldanha.github.io/microdatasus/), the following code
+block is an example that will download the data for the year 2015. The dengue
+database is heavy and it can take time to download it. It is therefor
+recommended to download the data once and save it to your computer. Afterwards
+you can load it from your local disk every time you want to analyse it.
 
-Sometimes problems with the variables occur when downloading data from mutiple
-years (e.g. 2012 to 2015). The developer are already aware of this. For now,
-download each year one by one, then import all years using bind_rows and use an
-argument to import all variables as a character.
+In the case of this script, run it the first code block once (with the second
+code block commented out), and then you can comment out the first code block and
+uncomment the first code block.
 
-```{r  Dengue_Load, message = FALSE, warning = FALSE}
+```{r Dengue_Load, message = FALSE, warning = FALSE}
 # den15 <- fetch_datasus(year_start = 2015, year_end = 2015, information_system = "SINAN-DENGUE")
-# den21 <- fetch_datasus(year_start = 2021, year_end = 2021, information_system = "SINAN-DENGUE")
+```
+
+<!--#  Sometimes problems with the variables occur when downloading data from mutiple years (e.g. 2012 to 2015). The developer are already aware of this. For now, download each year one by one, then import all years using bind_rows and use an argument to import all variables as a character.-->
+
+```{r}
 den15 <- readRDS("data/den15.rds")
-den21 <- readRDS("data/den21.rds")
 ```
 
 #### Understanding the data structure
@@ -90,7 +128,7 @@ decodification for all numerical categories. A small overview of this file can
 be seen below:
 
 ```{r Dengue_Dictionary,  message=FALSE}
-varEng <- read_csv("workspace/Dictionary_Dengue.csv")
+varEng <- readr::read_csv("workspace/Dictionary_Dengue.csv")
 knitr::kable(head(varEng[,1:4]))
 ```
 
@@ -101,7 +139,7 @@ Here, we chose as the main database to explore the variables, den15, a database
 you can download by the FTP link.
 
 ```{r}
-NAcount <- den15 %>% map(~mean(is.na(.)))
+NAcount <- den15 %>% purrr::map(~mean(is.na(.)))
 NAcount <- data.frame(unlist(NAcount))
 NAcount["var"] <- rownames(NAcount)
 ```
@@ -109,7 +147,7 @@ NAcount["var"] <- rownames(NAcount)
 ![](images/eye-01.png){width="24"} You can visualise it here.
 
 ```{r Dengue_NACount}
-p <- ggplot(NAcount[35:55,], aes(x = reorder(var, unlist.NAcount.), y = unlist.NAcount.))+
+p <- ggplot2::ggplot(NAcount[35:55,], aes(x = reorder(var, unlist.NAcount.), y = unlist.NAcount.))+
   geom_bar(stat = "identity", width = 0.9, position = position_dodge(width = 5))+
   ylab("Percentage of NAs in each column")+
   xlab("Variables")
@@ -135,24 +173,27 @@ sel_var <- c("DT_NOTIFIC",  "ID_MUNICIP",  "DT_SIN_PRI", "DT_NASC", "NU_IDADE_N"
              "DT_ENCERRA", "RES_CHIKS1","RES_CHIKS2", "RESUL_PRNT","RESUL_SORO","RESUL_NS1",
              "RESUL_VI_N", "RESUL_PCR_","HISTOPA_N","IMUNOH_N", "MUNICIPIO")
 
-den15 <- den15 %>% select(all_of(sel_var))
+den15 <- den15 %>% dplyr::select(dplyr::all_of(sel_var))
 ```
 
-<!-- ### VER Ver duplicados antes aqui, ver a comparaçao entre os dados do FTP e solicitados. Parece que precisa de data de nascimento para deduplicar. Probably we can't deduplicate the files from FTP. Check well the files from the MS. -->
-
-<!-- DL: Tego que terminar esto -->
-
-There is library in Python that can help
-https://pypi.org/project/pandas-dedupe/. ver 2015, esse veio do ministério
-
-```{r Checking duplicated registers}
+````{=html}
+<!-- ### VER Ver duplicados antes aqui, ver a comparaçao entre os dados do
+FTP e solicitados. Parece que precisa de data de nascimento para deduplicar.
+Probably we can't deduplicate the files from FTP. Check well the files from the
+MS. There is library in Python that can help
+https://pypi.org/project/pandas-dedupe/. ver 2015, esse veio do ministério 
+```{Checking duplicated registers}
 # Filtro: duplicidade ----
 # den15 %>%
-#   distinct(NU_NOTIFIC, DT_NOTIFIC, ID_MUNICIP, .keep_all = T) %>% count()
+#   distinct(NU_NOTIFIC, DT_NOTIFIC, ID_MUNICIP, .keep_all = T) %>% dplyr::count()
 #
 # den15 %>%
-#   distinct(NU_NOTIFIC, DT_NOTIFIC, ID_MUNICIP, DT_NASC, ID_UNIDADE, .keep_all = T) %>% count()
+#   distinct(NU_NOTIFIC, DT_NOTIFIC, ID_MUNICIP, DT_NASC, ID_UNIDADE, .keep_all = T) %>% dplyr::count()
 ```
+--\>
+
+<!-- DL: Tego que terminar esto -->
+````
 
 # Information on the patient
 
@@ -165,16 +206,16 @@ subtracting the birth-date from the notification date.
 
 ```{r}
 den15 <- den15 %>%
-    mutate(AGE_BIRTHDAY =
+    dplyr::mutate(AGE_BIRTHDAY =
              ifelse(format(den15$DT_NASC, "%m-%d") > format(den15$DT_NOTIFIC, "%m-%d"),
-                    year(den15$DT_NOTIFIC)-year(den15$DT_NASC)-1,
-                    year(den15$DT_NOTIFIC)-year(den15$DT_NASC)))
+                    lubridate::year(den15$DT_NOTIFIC)-lubridate::year(den15$DT_NASC)-1,
+                    lubridate::year(den15$DT_NOTIFIC)-lubridate::year(den15$DT_NASC)))
 ```
 
-![](images/eye-01.png){width="24"} You can visualise it here
+![](images/eye-01.png){width="24"} You can visualise it here:
 
 ```{r Dengue_AgeBirthday, warning=FALSE}
-ggplot(den15, aes(x = AGE_BIRTHDAY))+
+ggplot2::ggplot(den15, aes(x = AGE_BIRTHDAY))+
   geom_histogram(binwidth = 1, fill = "lightblue",color="black", alpha = 0.7)+
   annotate("text", x = 100, y = Inf, hjust = 1, vjust = 1, size = 4,
            label = paste0(sum(is.na(den15$AGE_BIRTHDAY)), " NA values"))+
@@ -193,7 +234,7 @@ used. **NU_IDADE_N** is codified as follows:
 
 ```{r Dengue_AgeCode, warning=FALSE}
 den15  <- den15 %>%
-  mutate(AGE_CODE = case_when(NU_IDADE_N < 120 ~ as.numeric(NU_IDADE_N), # assumes that non-codified data means that the age in years was given
+  dplyr::mutate(AGE_CODE = dplyr::case_when(NU_IDADE_N < 120 ~ as.numeric(NU_IDADE_N), # assumes that non-codified data means that the age in years was given
                            NU_IDADE_N >= 120 & NU_IDADE_N < 1000 ~ NA_real_,
                            NU_IDADE_N >= 1000 & NU_IDADE_N < 2366 ~ 0,
                            NU_IDADE_N >= 2366 & NU_IDADE_N < 3000 ~ NA_real_,
@@ -203,7 +244,7 @@ den15  <- den15 %>%
                            NU_IDADE_N >= 4120 ~ NA_real_,
                            TRUE ~ NA_real_))
 
-ggplot(den15[den15$AGE_CODE < 120,], aes(x = AGE_CODE))+
+ggplot2::ggplot(den15[den15$AGE_CODE < 120,], aes(x = AGE_CODE))+
   geom_histogram(binwidth = 1, fill = "lightblue",color="black", alpha = 0.7)+
   annotate("text", x = 100, y = Inf, hjust = 1, vjust = 1, size = 4,
            label = paste0(sum(is.na(den15$AGE_CODE)), " NA values"))+
@@ -218,12 +259,12 @@ two calculated ages differ:
 
 ```{r Dengue_AgeDecode1}
 compare_age <- den15[(den15$AGE_BIRTHDAY - den15$AGE_CODE) >1,] %>%
-  select(DT_NASC, NU_IDADE_N, AGE_CODE, AGE_BIRTHDAY)
+  dplyr::select(DT_NASC, NU_IDADE_N, AGE_CODE, AGE_BIRTHDAY)
 knitr::kable(head(compare_age[!is.na(compare_age$DT_NASC),]))
 ```
 
 ![](images/filter-01.png){width="20"} There are many people with an age code of
-0, but with an birthdate, that indicates a diferent age. Another common way to
+0, but with an birthdate, that indicates a different age. Another common way to
 filter inconsistencies is to discard people above the age of 120.
 
 <!-- Introduce line of code to filter. -->
@@ -235,7 +276,7 @@ filter inconsistencies is to discard people above the age of 120.
 
 ```{r}
 den15 <- den15 %>%
-  mutate(CS_SEXO = as.factor(case_when(CS_SEXO == "F" ~ "Female",
+  dplyr::mutate(CS_SEXO = as.factor(dplyr::case_when(CS_SEXO == "F" ~ "Female",
                                        CS_SEXO == "M" ~ "Male",
                                        CS_SEXO == "I" ~ "Ignored",
                                        TRUE ~ "NA")))
@@ -245,7 +286,7 @@ den15 <- den15 %>%
 below:
 
 ```{r Dengue_Sex}
-ggplot(den15, aes(x = CS_SEXO, fill=CS_SEXO))+
+ggplot2::ggplot(den15, aes(x = CS_SEXO, fill=CS_SEXO))+
   geom_bar()+
   ggtitle("Sex distribution of dengue cases in 2015")+
   labs(x = "Sex of the patient", y = "Count", fill="Sex")+
@@ -263,16 +304,16 @@ certain age can get pregnant this is another way to check for inconsistencies.
 
 ```{r Dengue_Pregnancy}
 pregnant <- den15 %>%
-  filter((CS_GESTANT == 1 | CS_GESTANT == 2 | CS_GESTANT ==3 | CS_GESTANT == 4)) %>%
-  count()
+  dplyr::filter((CS_GESTANT == 1 | CS_GESTANT == 2 | CS_GESTANT ==3 | CS_GESTANT == 4)) %>%
+  dplyr::count()
 
 mpreg <- den15 %>%
-  filter(CS_SEXO == "M" & (CS_GESTANT == 1 | CS_GESTANT == 2 | CS_GESTANT ==3 | CS_GESTANT == 4)) %>%
-  count()
+  dplyr::filter(CS_SEXO == "M" & (CS_GESTANT == 1 | CS_GESTANT == 2 | CS_GESTANT ==3 | CS_GESTANT == 4)) %>%
+  dplyr::count()
 
 pover50 <- den15 %>%
-  filter(AGE_CODE > 50 & (CS_GESTANT == 1 | CS_GESTANT == 2 | CS_GESTANT ==3 | CS_GESTANT == 4)) %>%
-  count()
+  dplyr::filter(AGE_CODE > 50 & (CS_GESTANT == 1 | CS_GESTANT == 2 | CS_GESTANT ==3 | CS_GESTANT == 4)) %>%
+  dplyr::count()
 
 ```
 
@@ -283,7 +324,7 @@ excluded using the following line.
 
 ```{r Dengue_Sex_Filter}
 den15 <- den15 %>%
-  filter(!(CS_GESTANT %in% c("1", "2", "3", "4") & CS_SEXO == "M") & 
+  dplyr::filter(!(CS_GESTANT %in% c("1", "2", "3", "4") & CS_SEXO == "M") & 
            !(CS_GESTANT %in% c("1", "2", "3", "4") & AGE_CODE > 50))
 ```
 
@@ -294,7 +335,7 @@ is given by **CS_RACA**.
 
 ```{r Dengue_Race}
 den15 <- den15 %>%
-    mutate(CS_RACA = as.factor(case_when(CS_RACA == 1 ~ "White",
+    dplyr::mutate(CS_RACA = as.factor(dplyr::case_when(CS_RACA == 1 ~ "White",
                                        CS_RACA == 2 ~ "Black",
                                        CS_RACA == 3 ~ "Yellow",
                                        CS_RACA == 4 ~ "Brown",
@@ -309,7 +350,7 @@ den15 <- den15 %>%
 ![](images/eye.png){alt="Learn" width="30"}
 
 ```{r Dengue_Race_Visualise}
-ggplot(den15, aes(x = CS_RACA, fill=CS_RACA)) +
+ggplot2::ggplot(den15, aes(x = CS_RACA, fill=CS_RACA)) +
   geom_bar() +
   ggtitle("Race/Color distribution of dengue cases in 2015") +
   geom_text(stat = 'count',
@@ -339,8 +380,8 @@ with warning signs) 12 - Severe Dengue 13 - Chikungunya
 
 ```{r Dengue_Classification_learn}
 classification <- den15 %>%
-   mutate(
-     CLASSI_FIN = as.factor(case_when(CLASSI_FIN == 1 ~ "Dengue",
+   dplyr::mutate(
+     CLASSI_FIN = as.factor(dplyr::case_when(CLASSI_FIN == 1 ~ "Dengue",
                                       CLASSI_FIN == 2 ~ "Severe Dengue",
                                       CLASSI_FIN == 3 ~ "Dengue Hemorrhagic Fever",
                                       CLASSI_FIN == 4 ~ "Dengue Shock Syndrome",
@@ -356,7 +397,7 @@ classification <- den15 %>%
 ![](images/eye.png){alt="Learn" width="30"}
 
 ```{r Dengue_Classification_Visualise}
-ggplot(classification) +
+ggplot2::ggplot(classification) +
   geom_bar(aes(x = CLASSI_FIN, fill=CLASSI_FIN)) +
   geom_text(stat = 'count',
             aes(label = paste0(round((after_stat(count))/sum(after_stat(count)) * 100, 1), "%"),
@@ -364,14 +405,14 @@ ggplot(classification) +
             position = position_stack(vjust = 0.5)) +
   labs(x="Classification category",
        y="Count",
-       title="Final classification of dengue cases in 2021",
+       title="Final classification of dengue cases in 2015",
        fill= "Classification")+
   theme_minimal()
 ```
 
 ![Filter](images/filter.png){alt="Filter" width="20"} Almost
 `r round(sum(classification$CLASSI_FIN == "Discarded")/nrow(classification) * 100, 1)`%
-of the cases in 2021 were **discarded**. If a study only considers **probable**
+of the cases in 2015 were **discarded**. If a study only considers **probable**
 dengue cases, these discarded cases, as well as those without classification,
 should be discarded.
 
@@ -389,13 +430,13 @@ options:
 
 ```{r}
 criteria <-  den15 %>%
-  count(CRITERIO, name = "count") %>%
-  mutate(percentage = prop.table(count),
+  dplyr::count(CRITERIO, name = "count") %>%
+  dplyr::mutate(percentage = prop.table(count),
          category = c("Laboratory", "Clinical epidimiological","Under investigation","Unknown"))
 ```
 
 ```{r Dengue_ConfirmationCriteria}
-ggplot(criteria, aes(x = category, y = count, fill = category)) +
+ggplot2::ggplot(criteria, aes(x = category, y = count, fill = category)) +
   geom_bar(stat = "identity") +
   geom_text(aes(label = paste0(round(percentage * 100, 1), "%")),
             position = position_stack(vjust = 0.5)) +
@@ -444,8 +485,8 @@ with a numerical code that indicates its result:
 
 ```{r Dengue_Examtype}
 exams <- den15 %>%
-  filter(CRITERIO == 1) %>%
-  summarise('Serological exam 1 (Chikungunya)' = sum(!is.na(RES_CHIKS1) & RES_CHIKS1 != 4 ),
+  dplyr::filter(CRITERIO == 1) %>%
+  dplyr::summarise('Serological exam 1 (Chikungunya)' = sum(!is.na(RES_CHIKS1) & RES_CHIKS1 != 4 ),
             'Serological exam 2 (Chikungunya)' = sum(!is.na(RES_CHIKS2) & RES_CHIKS2 != 4),
             'PRNT exam' = sum(!is.na(RESUL_PRNT) & RESUL_PRNT != 4),
             'Serological exam (dengue)' = sum(!is.na(RESUL_SORO) & RESUL_SORO != 4),
@@ -458,7 +499,7 @@ exams <-  data.frame(var= colnames(exams), val= t(exams))
 ```
 
 ```{r}
-ggplot(exams, aes(x = var, y = val, fill=val)) +
+ggplot2::ggplot(exams, aes(x = var, y = val, fill=val)) +
   geom_bar(stat = "identity",aes(reorder(var, val), val)) +
   ggtitle("Frequency of each lab exam performed for dengue cases in 2015") +
   xlab("Exams") +
@@ -476,15 +517,15 @@ the outcome of each dengue case.
 
 ```{r Dengue_Evolution}
 evolution <- den15 %>%
-   mutate(
-     EVOLUCAO = as.factor(case_when(EVOLUCAO == 1 ~ "Cured",
+   dplyr::mutate(
+     EVOLUCAO = as.factor(dplyr::case_when(EVOLUCAO == 1 ~ "Cured",
                                     EVOLUCAO == 2 ~ "Death by \nillness",
                                     EVOLUCAO == 3 ~ "Death by \nother cause",
                                     EVOLUCAO == 4 ~ "Death under \ninvestigation",
                                     EVOLUCAO == 9 ~ "Ignored",
                                     TRUE ~ "NA")))
 
-ggplot(evolution) +
+ggplot2::ggplot(evolution) +
   geom_bar(aes(x = EVOLUCAO, fill= EVOLUCAO)) +
   geom_text(stat = 'count',
             aes(label = paste0(round((after_stat(count))/sum(after_stat(count)) * 100, 1), "%"),
@@ -506,14 +547,14 @@ the week starts on Sunday.
 
 ```{r Dengue_NotificationTS}
 dengueEpiWeek <- den15 %>%
-  mutate(epiweek = paste0(sprintf("%02d",epiweek(DT_NOTIFIC)), "-2015")) %>%
-  group_by(epiweek) %>%
-  summarise(count = n()) %>%
-  select(epiweek, count)
+  dplyr::mutate(epiweek = paste0(sprintf("%02d",lubridate::epiweek(DT_NOTIFIC)), "-2015")) %>%
+  dplyr::group_by(epiweek) %>%
+  dplyr::summarise(count = dplyr::n()) %>%
+  dplyr::select(epiweek, count)
 ```
 
 ```{r}
-ggplot(dengueEpiWeek, aes(x = epiweek, y = count)) +
+ggplot2::ggplot(dengueEpiWeek, aes(x = epiweek, y = count)) +
   geom_bar(stat = "identity", fill = "lightblue", color="darkgrey",alpha = 0.7)+
   annotate("text", x = Inf, y = Inf, hjust = 1, vjust = 1, size = 4,
            label = paste0(sum(is.na(den15$DT_NOTIFIC)), " NA values")) +
@@ -539,7 +580,7 @@ duration <- as.numeric(den15$DT_ENCERRA - den15$DT_NOTIFIC)
 ```
 
 ```{r}
-ggplot(data.frame(duration = duration[duration < 100]), aes(x = duration)) +
+ggplot2::ggplot(data.frame(duration = duration[duration < 100]), aes(x = duration)) +
   geom_histogram(bins = 100, fill = "lightblue",color="black", alpha = 0.7)+
   annotate("text", x = Inf, y = Inf, hjust = 1, vjust = 1, size = 4,
            label = paste0(sum(is.na(den15$DT_ENCERRA)), " NA values")) +
@@ -569,11 +610,11 @@ time <- data.frame(A_SYMP = as.numeric(den15$DT_SIN_PRI - den15$DT_NOTIFIC),
                    B_SORO = as.numeric(den15$DT_SORO - den15$DT_NOTIFIC),
                    C_DEAD = as.numeric(den15$DT_OBITO - den15$DT_NOTIFIC),
                    D_TOTAL = as.numeric(den15$DT_ENCERRA - den15$DT_NOTIFIC))
-long <- gather(time, TYPE, DAYS, A_SYMP:D_TOTAL)
+long <- tidyr::gather(time, TYPE, DAYS, A_SYMP:D_TOTAL)
 ```
 
 ```{r}
-ggplot(long, aes(x = TYPE, y = DAYS)) +
+ggplot2::ggplot(long, aes(x = TYPE, y = DAYS)) +
   geom_boxplot() +
   coord_cartesian(ylim = c(-100, 100)) +
   labs(x="Event",
@@ -600,8 +641,8 @@ shapefiles of Brazils municipalities. This can be done via the *geobr* package
 by geobr is one digit too long and has to be shortened to 6 digits.
 
 ```{r  Dengue_LoadMuni, message=FALSE, warning=FALSE}
-muni <- read_municipality(code_muni = "all", year = 2015, showProgress = FALSE) %>%
-  mutate(code_muni = str_sub(code_muni, end = 6))
+muni <- geobr::read_municipality(code_muni = "all", year = 2015, showProgress = FALSE) %>%
+  dplyr::mutate(code_muni = stringr::str_sub(code_muni, end = 6))
 ```
 
 In total, the dataset refers to 4 different locations:
@@ -617,28 +658,28 @@ infec <- as.data.frame(table(den15$COMUNINF, dnn = list("code_muni")), responseN
 resi <- as.data.frame(table(den15$ID_MN_RESI, dnn = list("code_muni")), responseName = "resi_muni")
 hosp <- as.data.frame(table(den15$MUNICIPIO, dnn = list("code_muni")), responseName = "hosp_muni")
 
-allmuni <- left_join(muni, noti) %>%
-  left_join(., infec) %>%
-  left_join(., resi) %>%
-  left_join(., hosp)
+allmuni <- dplyr::left_join(muni, noti) %>%
+  dplyr::left_join(., infec) %>%
+  dplyr::left_join(., resi) %>%
+  dplyr::left_join(., hosp)
 
 cols <- c("green", "yellow","orange","red", "black")
 breaks <- c(0,10,100,1000,10000,100000)
-noti <- ggplot(allmuni) +
+noti <- ggplot2::ggplot(allmuni) +
   ggtitle("Notification municipality")+
   geom_sf( aes(fill=noti_muni), size=.15, show.legend = TRUE) +
   scale_fill_stepsn(breaks = breaks,
                     colours = cols,
                     values= scales::rescale(breaks))
 
-infec <- ggplot(allmuni) +
+infec <- ggplot2::ggplot(allmuni) +
   ggtitle("Probable infections municipality")+
   geom_sf( aes(fill=infec_muni), size=.15, show.legend = TRUE)  +
   scale_fill_stepsn(breaks = breaks,
                     colours = cols,
                     values= scales::rescale(breaks))
 
-resi <- ggplot(allmuni) +
+resi <- ggplot2::ggplot(allmuni) +
   ggtitle("Residence municipality")+
   geom_sf( aes(fill=resi_muni), size=.15, show.legend = TRUE)  +
   scale_fill_stepsn(breaks = breaks,
@@ -677,7 +718,7 @@ be viewed in 0_DownloadData.md).
 ```{r Dengue_LoadPopulation}
 get_br_pop_data(2015, save=F)
 
-allmuni <-  left_join(allmuni, pop_2015[c("code_muni","pop")], by="code_muni")
+allmuni <-  dplyr::left_join(allmuni, pop_2015[c("code_muni","pop")], by="code_muni")
 allmuni$pop <- as.numeric(allmuni$pop)
 ```
 
@@ -691,7 +732,7 @@ allmuni$resi_inc <- allmuni$resi_muni / allmuni$pop * 100000
 allmuni$hosp_inc <- allmuni$hosp_muni / allmuni$pop * 100000
 
 # Population
-ggplot(allmuni) +
+ggplot2::ggplot(allmuni) +
   ggtitle("Population in Brazil")+
   geom_sf( aes(fill = pop), size = .15, show.legend = TRUE)  +
   scale_fill_stepsn(breaks = breaks,
@@ -700,25 +741,25 @@ ggplot(allmuni) +
 
 # Incidence
 breaks2 <- c(0,5,25,50,100, 250)
-noti_inc <- ggplot(allmuni) +
+noti_inc <- ggplot2::ggplot(allmuni) +
   ggtitle("Incidence of dengue notifications in 2015")+
   geom_sf( aes(fill = noti_inc), size = .15, show.legend = TRUE)  +
   scale_fill_stepsn(breaks = breaks2,
                     colours = cols,
                     values = scales::rescale(breaks2))
-infec_inc <- ggplot(allmuni) +
+infec_inc <- ggplot2::ggplot(allmuni) +
   ggtitle("Incidence of probable dengue infections in 2015")+
   geom_sf( aes(fill = infec_inc), size = .15, show.legend = TRUE)  +
   scale_fill_stepsn(breaks = breaks2,
                     colours = cols,
                     values = scales::rescale(breaks2))
-resi_inc <- ggplot(allmuni) +
+resi_inc <- ggplot2::ggplot(allmuni) +
   ggtitle("Incidence of residents with dengue in 2015")+
   geom_sf( aes(fill = resi_inc), size = .15, show.legend = TRUE)  +
   scale_fill_stepsn(breaks = breaks2,
                     colours = cols,
                     values = scales::rescale(breaks2))
-hosp_inc <- ggplot(allmuni) +
+hosp_inc <- ggplot2::ggplot(allmuni) +
   ggtitle("Incidence of dengue hospitalizations in 2015")+
   geom_sf( aes(fill = hosp_inc), size = .15, show.legend = TRUE) +
   scale_fill_stepsn(breaks = breaks2,

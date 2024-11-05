@@ -4,13 +4,16 @@ project:
 website:
   favicon: images/harmonize_logo.png
   page-footer: 
-    left: "Daniela Lührsen, HARMONIZE" 
+    left: "HARMONIZE" 
     right: 
       - icon: github
-        href: https://github.com/
+        href: https://github.com/harmonize-tools
         target: _blank
-      - icon: twitter 
-        href: https://twitter.com/ 
+      - icon: wrench-adjustable-circle
+        href: https://harmonize-tools.github.io/
+        target: _blank
+      - icon: globe
+        href: https://www.harmonize-tools.org/
         target: _blank
   announcement: 
     icon: info-circle
@@ -36,7 +39,7 @@ website:
       collapse-level: 0
       contents:
       - text: data4health
-        href: about_data4health.qmd
+        href: index.qmd
       - href: about_project.qmd
         text: HARMONIZE project
       - href: about_tools.qmd

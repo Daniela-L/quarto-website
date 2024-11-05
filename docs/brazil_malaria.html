@@ -131,7 +131,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-home">    
         <li>
-    <a class="dropdown-item" href="./about_data4health.html">
+    <a class="dropdown-item" href="./index.html">
  <span class="dropdown-text">data4health</span></a>
   </li>  
         <li>
@@ -469,7 +469,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load packages</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>packages  <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"microdatasus"</span>, <span class="st">"dplyr"</span>, <span class="st">"purrr"</span>, <span class="st">"ggplot2"</span>,<span class="st">"tidyr"</span>, </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">"lubridate"</span>,<span class="st">"geobr"</span>, <span class="st">"stringr"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">"lubridate"</span>,<span class="st">"geobr"</span>, <span class="st">"stringr"</span>, <span class="st">"knitr"</span>, <span class="st">"scales"</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">install.packages</span>(<span class="fu">setdiff</span>(packages, <span class="fu">rownames</span>(<span class="fu">installed.packages</span>()))))</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">lapply</span>(packages, <span class="cf">function</span>(pkg) <span class="fu">suppressMessages</span>(<span class="fu">require</span>(pkg, <span class="at">character.only =</span> <span class="cn">TRUE</span>))))</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
@@ -484,10 +484,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="downloading-the-data" class="level1">
 <h1>Downloading the data</h1>
-<p>As described in the <a href="./brazil_download_data.html">download data - instructions</a>, the health data from Brazil can be downloaded in many different ways. Here, it is downloaded with the help of the package <em>microdatasus</em>. The following code block will download the data for the year 2014 (which was chosen randomly).</p>
+<p>As described in the <a href="./brazil_download_data.html">download data</a> instructions, the health data from Brazil can be downloaded in many different ways. Here, it is downloaded with the help of the package <a href="https://rfsaldanha.github.io/microdatasus/"><em>microdatasus</em></a>. The following code block will download the data for the year 2014.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># malariaData &lt;- fetch_datasus(year_start = 2014, year_end = 2014, information_system = "SINAN-MALARIA")</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/mal14.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># malariaData &lt;- microdatasus::fetch_datasus(year_start = 2014, year_end = 2014, information_system = "SINAN-MALARIA")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/mal14.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="getting-to-know-the-data" class="level1">
@@ -496,7 +498,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="variables"><em>Variables</em></h3>
 <p><img src="images/idea-02.png" class="img-fluid" width="25"> There are a total of 50 variables. The variables names can be seen below:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(malariaData)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(malariaData)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "TP_NOT"     "ID_AGRAVO"  "DT_NOTIFIC" "SEM_NOT"    "NU_ANO"    
  [6] "SG_UF_NOT"  "ID_MUNICIP" "ID_REGIONA" "ID_UNIDADE" "DT_SIN_PRI"
@@ -512,9 +514,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>The definition of each variable can be found in the <a href="workspace/Dictionary_Malaria_PT.pdf">official documentation</a> or <a href="http://portalsinan.saude.gov.br/images/documentos/Agravos/Malaria/DIC_DADOS_Malaria_v5.pdf">online</a> in Portuguese, or in this <a href="workspace/Dictionary_Malaria_EN.csv">translated csv file</a>. This file also contains the decodification for all numerical categories. A small overview of this file can be seen below:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>malariaVarDefPath <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="fu">getwd</span>(), <span class="st">'workspace'</span>, <span class="st">'Dictionary_Malaria_EN.csv'</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>malariaVarDef <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(malariaVarDefPath)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(malariaVarDef[<span class="dv">14</span><span class="sc">:</span><span class="dv">20</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>malariaVarDefPath <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="fu">getwd</span>(), <span class="st">'workspace'</span>, <span class="st">'Dictionary_Malaria_EN.csv'</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>malariaVarDef <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(malariaVarDefPath)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(malariaVarDef[<span class="dv">14</span><span class="sc">:</span><span class="dv">20</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
@@ -598,26 +600,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><img src="images/filter-01.png" class="img-fluid" width="20"> To avoid working with unnecessary data, it is useful to filter out the variables that will not be used. Below is a line of code on how to select only the needed variables.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sel_var <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"NU_IDADE_N"</span>,<span class="st">"CS_SEXO"</span>, <span class="st">"CS_GESTANT"</span>, <span class="st">"CS_RACA"</span>, <span class="st">"AT_LAMINA"</span>, <span class="st">"AT_SINTOMA"</span>, <span class="st">"DT_NOTIFIC"</span>, <span class="st">"DT_SIN_PRI"</span>, <span class="st">"DT_DIGITA"</span>, <span class="st">"DEXAME"</span>, <span class="st">"DTRATA"</span>, <span class="st">"ID_MUNICIP"</span>,  <span class="st">"ID_MN_RESI"</span>,  <span class="st">"COMUNINF"</span>,<span class="st">"RESULT"</span>) </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">all_of</span>(sel_var))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sel_var <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"NU_IDADE_N"</span>,<span class="st">"CS_SEXO"</span>, <span class="st">"CS_GESTANT"</span>, <span class="st">"CS_RACA"</span>, <span class="st">"AT_LAMINA"</span>, <span class="st">"AT_SINTOMA"</span>, <span class="st">"DT_NOTIFIC"</span>, <span class="st">"DT_SIN_PRI"</span>, <span class="st">"DT_DIGITA"</span>, <span class="st">"DEXAME"</span>, <span class="st">"DTRATA"</span>, <span class="st">"ID_MUNICIP"</span>,  <span class="st">"ID_MN_RESI"</span>,  <span class="st">"COMUNINF"</span>,<span class="st">"RESULT"</span>) </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(dplyr<span class="sc">::</span><span class="fu">all_of</span>(sel_var))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="completeness-of-the-data" class="level3">
 <h3 class="anchored" data-anchor-id="completeness-of-the-data"><em>Completeness of the data</em></h3>
 <p><img src="images/idea-02.png" class="img-fluid" width="25"> Some of these variables are mandatory to notify, others are not, which leads to incomplete datasets. The chart <strong>NACountChart</strong> shows the the variables which have NA-values and the percentage of NAs they contain.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>NACount <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span> <span class="fu">map</span>(<span class="sc">~</span><span class="fu">mean</span>(<span class="fu">is.na</span>(.)))</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>NACount <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">count=</span><span class="fu">unlist</span>(NACount),</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">var=</span><span class="fu">names</span>(NACount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>NACount <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span> purrr<span class="sc">::</span><span class="fu">map</span>(<span class="sc">~</span><span class="fu">mean</span>(<span class="fu">is.na</span>(.)))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>NACount <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">count=</span><span class="fu">unlist</span>(NACount),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">var=</span><span class="fu">names</span>(NACount))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><img src="images/eye-01.png" class="img-fluid" width="24"> Visualise it!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(NACount[NACount<span class="sc">$</span>count <span class="sc">!=</span> <span class="dv">0</span>, ], <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(var, count), <span class="at">y =</span> count)) <span class="sc">+</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">width =</span> <span class="fl">0.9</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="dv">5</span>)) <span class="sc">+</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percentage of NAs in each column"</span>) <span class="sc">+</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Variables"</span>) <span class="sc">+</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(NACount[NACount<span class="sc">$</span>count <span class="sc">!=</span> <span class="dv">0</span>, ], <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(var, count), <span class="at">y =</span> count)) <span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">width =</span> <span class="fl">0.9</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percentage of NAs in each column"</span>) <span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Variables"</span>) <span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -628,7 +630,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>On the contrary, it is also good to know what variables are complete.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>NACount<span class="sc">$</span>var[NACount<span class="sc">$</span>count <span class="sc">==</span> <span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>NACount<span class="sc">$</span>var[NACount<span class="sc">$</span>count <span class="sc">==</span> <span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "NU_IDADE_N" "CS_SEXO"    "CS_GESTANT" "DT_NOTIFIC" "DT_SIN_PRI"
 [6] "DT_DIGITA"  "ID_MUNICIP"</code></pre>
@@ -636,8 +638,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><img src="images/filter-01.png" class="img-fluid" width="20"> To filter out variables which are (almost) completely empty,you can run the following lines.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>drop_variables <span class="ot">&lt;-</span> NACount<span class="sc">$</span>var[NACount<span class="sc">$</span>count <span class="sc">==</span> <span class="dv">1</span>]</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData[, <span class="sc">!</span>(<span class="fu">names</span>(malariaData) <span class="sc">%in%</span> drop_variables)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>drop_variables <span class="ot">&lt;-</span> NACount<span class="sc">$</span>var[NACount<span class="sc">$</span>count <span class="sc">==</span> <span class="dv">1</span>]</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData[, <span class="sc">!</span>(<span class="fu">names</span>(malariaData) <span class="sc">%in%</span> drop_variables)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="exam-results" class="level4">
 <h4 class="anchored" data-anchor-id="exam-results">Exam results</h4>
@@ -655,29 +657,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 <p>The <strong>negative</strong> notification needs to be filtered (excluded) to obtain the total malaria cases because they are not cases as the exam result was negative. Also, we should exclude NAs.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">RESULT =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(RESULT <span class="sc">==</span> <span class="st">"1"</span> <span class="sc">~</span> <span class="st">"Negative"</span>,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"2"</span> <span class="sc">~</span> <span class="st">"Falciparum"</span>,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"3"</span> <span class="sc">~</span> <span class="st">"F+Fg"</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"4"</span> <span class="sc">~</span> <span class="st">"Vivax"</span>,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"5"</span> <span class="sc">~</span> <span class="st">"F+V"</span>,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"6"</span> <span class="sc">~</span> <span class="st">"V+Fg"</span>,</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"7"</span> <span class="sc">~</span> <span class="st">"Fg"</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"8"</span> <span class="sc">~</span> <span class="st">"Malariae"</span>,</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"9"</span> <span class="sc">~</span> <span class="st">"F+M"</span>,</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"10"</span> <span class="sc">~</span> <span class="st">"Ovale"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">RESULT =</span> <span class="fu">as.factor</span>(dplyr<span class="sc">::</span><span class="fu">case_when</span>(RESULT <span class="sc">==</span> <span class="st">"1"</span> <span class="sc">~</span> <span class="st">"Negative"</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"2"</span> <span class="sc">~</span> <span class="st">"Falciparum"</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"3"</span> <span class="sc">~</span> <span class="st">"F+Fg"</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"4"</span> <span class="sc">~</span> <span class="st">"Vivax"</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"5"</span> <span class="sc">~</span> <span class="st">"F+V"</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"6"</span> <span class="sc">~</span> <span class="st">"V+Fg"</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"7"</span> <span class="sc">~</span> <span class="st">"Fg"</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"8"</span> <span class="sc">~</span> <span class="st">"Malariae"</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"9"</span> <span class="sc">~</span> <span class="st">"F+M"</span>,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>                                      RESULT <span class="sc">==</span> <span class="st">"10"</span> <span class="sc">~</span> <span class="st">"Ovale"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><img src="images/eye-01.png" class="img-fluid" width="24"> Visualise it!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(malariaData, <span class="fu">aes</span>(<span class="at">x =</span> RESULT, <span class="at">fill=</span>RESULT)) <span class="sc">+</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="cn">Inf</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(malariaData<span class="sc">$</span>RESULT)), <span class="st">" NA values"</span>))<span class="sc">+</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Exam results during malaria cases in 2014"</span>,</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Count"</span>, <span class="at">x=</span><span class="st">"Exam Result"</span>, <span class="at">fill=</span><span class="st">"Exam Results"</span>) <span class="sc">+</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">stat =</span> <span class="st">'count'</span>, <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>),</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>((<span class="fu">after_stat</span>(count))<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">after_stat</span>(count)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%"</span>),</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">x =</span> RESULT))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(malariaData, <span class="fu">aes</span>(<span class="at">x =</span> RESULT, <span class="at">fill=</span>RESULT)) <span class="sc">+</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="cn">Inf</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(malariaData<span class="sc">$</span>RESULT)), <span class="st">" NA values"</span>))<span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Exam results during malaria cases in 2014"</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Count"</span>, <span class="at">x=</span><span class="st">"Exam Result"</span>, <span class="at">fill=</span><span class="st">"Exam Results"</span>) <span class="sc">+</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">stat =</span> <span class="st">'count'</span>, <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>((<span class="fu">after_stat</span>(count))<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">after_stat</span>(count)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%"</span>),</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">x =</span> RESULT))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -688,28 +690,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><img src="images/idea-02.png" class="img-fluid" width="25"> However, generally, people only distinguish in 3 categories: <em>P. vivax</em> and <em>P. falciparum</em> and the mixed version <em>P+V</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">RES_EXAM =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(RESULT <span class="sc">==</span> <span class="st">"Falciparum"</span> <span class="sc">|</span> RESULT <span class="sc">==</span> <span class="st">"F+Fg"</span> <span class="sc">|</span> RESULT <span class="sc">==</span> <span class="st">"Fg"</span> <span class="sc">|</span> RESULT <span class="sc">==</span> <span class="st">"F+M"</span> <span class="sc">~</span> <span class="st">"F"</span>,</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                                        RESULT <span class="sc">==</span> <span class="st">"Vivax"</span> <span class="sc">|</span> RESULT <span class="sc">==</span> <span class="st">"V+Fg"</span> <span class="sc">~</span> <span class="st">"V"</span>,</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                                        RESULT <span class="sc">==</span> <span class="st">"F+V"</span>  <span class="sc">~</span>  <span class="st">"V+F"</span>,</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                                        RESULT <span class="sc">==</span> <span class="st">"Malariae"</span> <span class="sc">|</span> RESULT <span class="sc">==</span> <span class="st">"Ovale"</span> <span class="sc">~</span> <span class="st">"other"</span>,</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>                                        RESULT <span class="sc">==</span> <span class="st">"Negative"</span> <span class="sc">~</span> <span class="st">"Negative"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">RES_EXAM =</span> <span class="fu">as.factor</span>(dplyr<span class="sc">::</span><span class="fu">case_when</span>(RESULT <span class="sc">==</span> <span class="st">"Falciparum"</span> <span class="sc">|</span> RESULT <span class="sc">==</span> <span class="st">"F+Fg"</span> <span class="sc">|</span> RESULT <span class="sc">==</span> <span class="st">"Fg"</span> <span class="sc">|</span> RESULT <span class="sc">==</span> <span class="st">"F+M"</span> <span class="sc">~</span> <span class="st">"F"</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                                        RESULT <span class="sc">==</span> <span class="st">"Vivax"</span> <span class="sc">|</span> RESULT <span class="sc">==</span> <span class="st">"V+Fg"</span> <span class="sc">~</span> <span class="st">"V"</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                                        RESULT <span class="sc">==</span> <span class="st">"F+V"</span>  <span class="sc">~</span>  <span class="st">"V+F"</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                                        RESULT <span class="sc">==</span> <span class="st">"Malariae"</span> <span class="sc">|</span> RESULT <span class="sc">==</span> <span class="st">"Ovale"</span> <span class="sc">~</span> <span class="st">"other"</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                                        RESULT <span class="sc">==</span> <span class="st">"Negative"</span> <span class="sc">~</span> <span class="st">"Negative"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><img src="images/eye-01.png" class="img-fluid" width="24"> Visualise it!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(malariaData, <span class="fu">aes</span>(<span class="at">x =</span> RES_EXAM, <span class="at">fill=</span>RES_EXAM)) <span class="sc">+</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Exam results during malaria cases in 2014"</span>,</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Count"</span>, <span class="at">x=</span><span class="st">"Exam Result"</span>, <span class="at">fill=</span><span class="st">"Exam Results"</span>) <span class="sc">+</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="cn">Inf</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>,</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(malariaData<span class="sc">$</span>RES_EXAM)), <span class="st">" NA values"</span>))<span class="sc">+</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">stat =</span> <span class="st">'count'</span>, <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>),</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>((<span class="fu">after_stat</span>(count))<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">after_stat</span>(count)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%"</span>),</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">x =</span> RES_EXAM))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(malariaData, <span class="fu">aes</span>(<span class="at">x =</span> RES_EXAM, <span class="at">fill=</span>RES_EXAM)) <span class="sc">+</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Exam results during malaria cases in 2014"</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Count"</span>, <span class="at">x=</span><span class="st">"Exam Result"</span>, <span class="at">fill=</span><span class="st">"Exam Results"</span>) <span class="sc">+</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="cn">Inf</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(malariaData<span class="sc">$</span>RES_EXAM)), <span class="st">" NA values"</span>))<span class="sc">+</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">stat =</span> <span class="st">'count'</span>, <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>((<span class="fu">after_stat</span>(count))<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">after_stat</span>(count)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%"</span>),</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">x =</span> RES_EXAM))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="brazil_malaria_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="brazil_malaria_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -727,7 +729,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><img src="images/filter-01.png" class="img-fluid" width="20"> To exclude cases with a negative test result, you can run the following lines</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData[malariaData<span class="sc">$</span>RESULT <span class="sc">!=</span> <span class="st">"Negative"</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData[malariaData<span class="sc">$</span>RESULT <span class="sc">!=</span> <span class="st">"Negative"</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -743,24 +745,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p>The age can be “decodified” with the command line below. This line of code also automatically removes all inconsistent ages, i.e.&nbsp;people over 120 years and people whose age was given in a unusual way (e.g.&nbsp;84 months).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>malariaData  <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">AGE =</span> <span class="fu">case_when</span>(NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">120</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(NU_IDADE_N), <span class="co"># assumes that non-codified data means that the age in years was given</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">120</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">1000</span> <span class="sc">~</span> <span class="cn">NA_real_</span>,</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">1000</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">2366</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">2366</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">3000</span> <span class="sc">~</span> <span class="cn">NA_real_</span>,</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">3000</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">3013</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">3013</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">4000</span> <span class="sc">~</span> <span class="cn">NA_real_</span>,</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">4000</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">4120</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(NU_IDADE_N <span class="sc">-</span> <span class="dv">4000</span>),</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">4120</span> <span class="sc">~</span> <span class="cn">NA_real_</span>,</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>                           <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_real_</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>malariaData  <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">AGE =</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">120</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(NU_IDADE_N), <span class="co"># assumes that non-codified data means that the age in years was given</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">120</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">1000</span> <span class="sc">~</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">1000</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">2366</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">2366</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">3000</span> <span class="sc">~</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">3000</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">3013</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">3013</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">4000</span> <span class="sc">~</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">4000</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">4120</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(NU_IDADE_N <span class="sc">-</span> <span class="dv">4000</span>),</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">4120</span> <span class="sc">~</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>                           <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_real_</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><img src="images/eye-01.png" class="img-fluid" width="24"> Visualise it!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(malariaData, <span class="fu">aes</span>(<span class="at">x =</span> AGE))<span class="sc">+</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>,<span class="at">color=</span><span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>)<span class="sc">+</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">100</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(malariaData<span class="sc">$</span>AGE)), <span class="st">" NA values"</span>), <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>)<span class="sc">+</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Age [years]"</span>, <span class="at">y=</span><span class="st">"Count"</span>, <span class="at">title=</span><span class="st">"Age distribution"</span>)<span class="sc">+</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(malariaData, <span class="fu">aes</span>(<span class="at">x =</span> AGE))<span class="sc">+</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>,<span class="at">color=</span><span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>)<span class="sc">+</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">100</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(malariaData<span class="sc">$</span>AGE)), <span class="st">" NA values"</span>), <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>)<span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Age [years]"</span>, <span class="at">y=</span><span class="st">"Count"</span>, <span class="at">title=</span><span class="st">"Age distribution"</span>)<span class="sc">+</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -775,22 +777,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="sex-of-the-patients"><em>Sex of the patients</em></h3>
 <p><img src="images/idea-02.png" class="img-fluid" width="25"> The sex of the patients is given by <strong>CS_SEXO</strong>. A table and a barplot of its distribution can be seen below:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">CS_SEXO =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(CS_SEXO <span class="sc">==</span> <span class="st">"F"</span> <span class="sc">~</span> <span class="st">"Female"</span>,</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                                       CS_SEXO <span class="sc">==</span> <span class="st">"M"</span> <span class="sc">~</span> <span class="st">"Male"</span>,</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                                       CS_SEXO <span class="sc">==</span> <span class="st">"I"</span> <span class="sc">~</span> <span class="st">"Ignored"</span>,</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>                                       <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"NA"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">CS_SEXO =</span> <span class="fu">as.factor</span>(dplyr<span class="sc">::</span><span class="fu">case_when</span>(CS_SEXO <span class="sc">==</span> <span class="st">"F"</span> <span class="sc">~</span> <span class="st">"Female"</span>,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                                       CS_SEXO <span class="sc">==</span> <span class="st">"M"</span> <span class="sc">~</span> <span class="st">"Male"</span>,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                                       CS_SEXO <span class="sc">==</span> <span class="st">"I"</span> <span class="sc">~</span> <span class="st">"Ignored"</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                                       <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"NA"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><img src="images/eye-01.png" class="img-fluid" width="24"> Visualise it!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">ggplot</span>(malariaData, <span class="fu">aes</span>(<span class="at">x =</span> CS_SEXO, <span class="at">fill=</span>CS_SEXO)) <span class="sc">+</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Sex distribution of malaria cases in 2015"</span>,</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">"Sex of the patient"</span>, <span class="at">y=</span><span class="st">"Count"</span>, <span class="at">fill=</span><span class="st">"Sex"</span>)<span class="sc">+</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">stat =</span> <span class="st">'count'</span>, <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>),</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>((<span class="fu">after_stat</span>(count))<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">after_stat</span>(count)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%"</span>),</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">x =</span> CS_SEXO)) <span class="sc">+</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">ggplot</span>(malariaData, <span class="fu">aes</span>(<span class="at">x =</span> CS_SEXO, <span class="at">fill=</span>CS_SEXO)) <span class="sc">+</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Sex distribution of malaria cases in 2015"</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">"Sex of the patient"</span>, <span class="at">y=</span><span class="st">"Count"</span>, <span class="at">fill=</span><span class="st">"Sex"</span>)<span class="sc">+</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">stat =</span> <span class="st">'count'</span>, <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>((<span class="fu">after_stat</span>(count))<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">after_stat</span>(count)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%"</span>),</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">x =</span> CS_SEXO)) <span class="sc">+</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -804,37 +806,37 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="pregnancy"><em>Pregnancy</em></h3>
 <p><img src="images/idea-02.png" class="img-fluid" width="25"> Another related variable is <strong>CS_GESTANT</strong>, which indicates whether the patient is pregnant. Since only women below a certain age can get pregnant this is another way to check for inconsistencies.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>pregnant <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>((CS_GESTANT <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">2</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span><span class="dv">3</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>mpreg <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CS_SEXO <span class="sc">==</span> <span class="st">"M"</span> <span class="sc">&amp;</span> (CS_GESTANT <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">2</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span><span class="dv">3</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>pover50 <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(AGE <span class="sc">&gt;</span> <span class="dv">50</span> <span class="sc">&amp;</span> (CS_GESTANT <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">2</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span><span class="dv">3</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>pregnant <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>((CS_GESTANT <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">2</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span><span class="dv">3</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>()</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>mpreg <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(CS_SEXO <span class="sc">==</span> <span class="st">"M"</span> <span class="sc">&amp;</span> (CS_GESTANT <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">2</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span><span class="dv">3</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>()</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>pover50 <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(AGE <span class="sc">&gt;</span> <span class="dv">50</span> <span class="sc">&amp;</span> (CS_GESTANT <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">2</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span><span class="dv">3</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><img src="images/filter-01.png" class="img-fluid" width="20"> Out of 5 pregnant patients, there are 0 pregnant males and 0 pregnant women over the age of 50. Again, depending on the aim of the study, these patients could be excluded using the following line.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(CS_GESTANT <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>) <span class="sc">&amp;</span> CS_SEXO <span class="sc">==</span> <span class="st">"M"</span>) <span class="sc">&amp;</span> </span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!</span>(CS_GESTANT <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>) <span class="sc">&amp;</span> AGE <span class="sc">&gt;</span> <span class="dv">50</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span>(CS_GESTANT <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>) <span class="sc">&amp;</span> CS_SEXO <span class="sc">==</span> <span class="st">"M"</span>) <span class="sc">&amp;</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!</span>(CS_GESTANT <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>) <span class="sc">&amp;</span> AGE <span class="sc">&gt;</span> <span class="dv">50</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="race-of-the-patients" class="level3">
 <h3 class="anchored" data-anchor-id="race-of-the-patients"><em>Race of the patients</em></h3>
 <p><img src="images/idea-02.png" class="img-fluid" width="25"> The race of the patient is given by <strong>CS_RACA</strong>. A barplot of its distribution can be seen below:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">CS_RACA =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(CS_RACA <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"White"</span>,</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                                       CS_RACA <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Black"</span>,</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                                       CS_RACA <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"Yellow"</span>,</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                                       CS_RACA <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Brown"</span>,</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                                       CS_RACA <span class="sc">==</span> <span class="dv">5</span> <span class="sc">~</span> <span class="st">"Indigenous"</span>,</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>                                       CS_RACA <span class="sc">==</span> <span class="dv">9</span> <span class="sc">~</span> <span class="st">"Ignored"</span>,</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>                                       <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"NA"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">CS_RACA =</span> <span class="fu">as.factor</span>(dplyr<span class="sc">::</span><span class="fu">case_when</span>(CS_RACA <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"White"</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                                       CS_RACA <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Black"</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                                       CS_RACA <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"Yellow"</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                                       CS_RACA <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Brown"</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>                                       CS_RACA <span class="sc">==</span> <span class="dv">5</span> <span class="sc">~</span> <span class="st">"Indigenous"</span>,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>                                       CS_RACA <span class="sc">==</span> <span class="dv">9</span> <span class="sc">~</span> <span class="st">"Ignored"</span>,</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>                                       <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"NA"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><img src="images/eye-01.png" class="img-fluid" width="24"> Visualise it!</p>
 <div class="cell">
@@ -854,24 +856,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="type-of-detection"><em>Type of detection</em></h3>
 <p><img src="images/idea-02.png" class="img-fluid" width="25"> Malaria can be detected either actively (when someone goes to doctor because of symptoms), passively (as protocol when one case is detected, people living in the same place are screened) or through LVC (Lamina de Verificaçao de Cura = cure thick blood smear verification). The variable <strong>AT_LAMINA</strong>, shows exactly this.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">AT_LAMINA =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(AT_LAMINA <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Active"</span>,</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                                       AT_LAMINA <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Passive"</span>,</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                                       AT_LAMINA <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"LVC"</span>,</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                                       <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"NA"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">AT_LAMINA =</span> <span class="fu">as.factor</span>(dplyr<span class="sc">::</span><span class="fu">case_when</span>(AT_LAMINA <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Active"</span>,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                                       AT_LAMINA <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Passive"</span>,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                                       AT_LAMINA <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"LVC"</span>,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                                       <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"NA"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><img src="images/eye-01.png" class="img-fluid" width="24"> Visualise it!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(malariaData, <span class="fu">aes</span>(<span class="at">x =</span> AT_LAMINA, <span class="at">fill=</span>AT_LAMINA)) <span class="sc">+</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Type of detections of malaria cases in 2014"</span>,</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Count"</span>, <span class="at">x=</span><span class="st">"Detection type"</span>, <span class="at">fill=</span><span class="st">"Detection type"</span>)<span class="sc">+</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">stat =</span> <span class="st">'count'</span>,</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>((<span class="fu">after_stat</span>(count))<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">after_stat</span>(count)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%"</span>),</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">x =</span> AT_LAMINA),</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="cn">Inf</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>,</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(malariaData<span class="sc">$</span>AT_LAMINA)), <span class="st">" NA values"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(malariaData, <span class="fu">aes</span>(<span class="at">x =</span> AT_LAMINA, <span class="at">fill=</span>AT_LAMINA)) <span class="sc">+</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Type of detections of malaria cases in 2014"</span>,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Count"</span>, <span class="at">x=</span><span class="st">"Detection type"</span>, <span class="at">fill=</span><span class="st">"Detection type"</span>)<span class="sc">+</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">stat =</span> <span class="st">'count'</span>,</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>((<span class="fu">after_stat</span>(count))<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">after_stat</span>(count)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%"</span>),</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">x =</span> AT_LAMINA),</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="cn">Inf</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>,</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(malariaData<span class="sc">$</span>AT_LAMINA)), <span class="st">" NA values"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -886,22 +888,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="symptoms"><em>Symptoms</em></h3>
 <p><img src="images/idea-02.png" class="img-fluid" width="25"> For malaria, the variable <strong>AT_SINTOMA</strong> makes the distinction whether there are symptoms present or not.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">AT_SINTOMA =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(AT_SINTOMA<span class="sc">==</span> <span class="st">"1"</span> <span class="sc">~</span> <span class="st">"Yes"</span>,</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                                          AT_SINTOMA <span class="sc">==</span> <span class="st">"2"</span> <span class="sc">~</span> <span class="st">"No"</span>,</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>                                          <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"NA"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">AT_SINTOMA =</span> <span class="fu">as.factor</span>(dplyr<span class="sc">::</span><span class="fu">case_when</span>(AT_SINTOMA<span class="sc">==</span> <span class="st">"1"</span> <span class="sc">~</span> <span class="st">"Yes"</span>,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                                          AT_SINTOMA <span class="sc">==</span> <span class="st">"2"</span> <span class="sc">~</span> <span class="st">"No"</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                                          <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"NA"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><img src="images/eye-01.png" class="img-fluid" width="24"> Visualise it!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span> malariaData, <span class="fu">aes</span>(<span class="at">x =</span> AT_SINTOMA, <span class="at">fill=</span>AT_SINTOMA)) <span class="sc">+</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Presence of symptoms during malaria cases in 2014"</span>,</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Count"</span>, <span class="at">x=</span><span class="st">"Presence of symptoms"</span>, <span class="at">fill=</span><span class="st">"Presence of symptoms"</span>) <span class="sc">+</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="cn">Inf</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>,</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(malariaData<span class="sc">$</span>AT_SINTOMA)), <span class="st">" NA values"</span>))<span class="sc">+</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">stat =</span> <span class="st">'count'</span>, <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>),</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>((<span class="fu">after_stat</span>(count))<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">after_stat</span>(count)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%"</span>),</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">x =</span> AT_SINTOMA))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span> malariaData, <span class="fu">aes</span>(<span class="at">x =</span> AT_SINTOMA, <span class="at">fill=</span>AT_SINTOMA)) <span class="sc">+</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Presence of symptoms during malaria cases in 2014"</span>,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Count"</span>, <span class="at">x=</span><span class="st">"Presence of symptoms"</span>, <span class="at">fill=</span><span class="st">"Presence of symptoms"</span>) <span class="sc">+</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="cn">Inf</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(malariaData<span class="sc">$</span>AT_SINTOMA)), <span class="st">" NA values"</span>))<span class="sc">+</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">stat =</span> <span class="st">'count'</span>, <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>((<span class="fu">after_stat</span>(count))<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">after_stat</span>(count)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%"</span>),</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">x =</span> AT_SINTOMA))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -919,18 +921,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="notification-distribution-throughout-the-year"><em>Notification distribution throughout the year</em></h3>
 <p><img src="images/idea-02.png" class="img-fluid" width="25"> In the dataset, you can find many dates, one of the most important might be the notification date <strong>DT_NOTIFIC</strong>. This is the first time that a potential malaria patient contacts the medical authorities. Below the annual distribution of notifications during 2014 can be seen. There is no clear seasonal variation but tended to concentrate cases during the summer season in Brazil.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="sc">%&gt;%</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">EPIWEEK =</span> <span class="fu">floor_date</span>(DT_NOTIFIC, <span class="st">"weeks"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(EPIWEEK) <span class="sc">%&gt;%</span></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Count =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> EPIWEEK, <span class="at">y =</span> Count)) <span class="sc">+</span></span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_date</span>(<span class="at">date_labels =</span> <span class="st">"%m-%d"</span>, <span class="at">date_breaks =</span> <span class="st">"1 week"</span>) <span class="sc">+</span></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">EPIWEEK =</span> lubridate<span class="sc">::</span><span class="fu">floor_date</span>(DT_NOTIFIC, <span class="st">"weeks"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(EPIWEEK) <span class="sc">%&gt;%</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">Count =</span> dplyr<span class="sc">::</span><span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> EPIWEEK, <span class="at">y =</span> Count)) <span class="sc">+</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_date</span>(<span class="at">date_labels =</span> <span class="st">"%m-%d"</span>, <span class="at">date_breaks =</span> <span class="st">"1 week"</span>) <span class="sc">+</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="brazil_malaria_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="brazil_malaria_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -940,21 +942,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="timeline-of-all-other-events"><em>Timeline of all other events</em></h3>
 <p><img src="images/idea-02.png" class="img-fluid" width="25"> First, symptoms occur (<strong>DT_SIN_TO_PRI</strong>). Once the doctor notifies a suspected malaria case (<strong>DT_NOTIFIC</strong>), it will be digitized (<strong>DT_DIGITA</strong>). The malaria case needs to be confirmed through an exam (<strong>DEXAME</strong>), and if confirmed, treated (<strong>DTRATA</strong>). Below are boxplots for each of the events date.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Symptoms =</span> <span class="fu">as.numeric</span>(DT_SIN_PRI <span class="sc">-</span> DT_NOTIFIC),</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">Digitalization =</span> <span class="fu">as.numeric</span>(DT_DIGITA <span class="sc">-</span> DT_NOTIFIC),</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">Exam =</span> <span class="fu">as.numeric</span>(DEXAME <span class="sc">-</span> DT_NOTIFIC),</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">Treatment =</span> <span class="fu">as.numeric</span>(DTRATA <span class="sc">-</span> DT_NOTIFIC))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="ot">&lt;-</span> malariaData <span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">Symptoms =</span> <span class="fu">as.numeric</span>(DT_SIN_PRI <span class="sc">-</span> DT_NOTIFIC),</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">Digitalization =</span> <span class="fu">as.numeric</span>(DT_DIGITA <span class="sc">-</span> DT_NOTIFIC),</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">Exam =</span> <span class="fu">as.numeric</span>(DEXAME <span class="sc">-</span> DT_NOTIFIC),</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">Treatment =</span> <span class="fu">as.numeric</span>(DTRATA <span class="sc">-</span> DT_NOTIFIC))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="sc">%&gt;%</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Symptoms, Digitalization, Exam, Treatment) <span class="sc">%&gt;%</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gather</span>(TYPE, DAYS) <span class="sc">%&gt;%</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> TYPE, <span class="at">y =</span> DAYS)) <span class="sc">+</span></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">100</span>, <span class="dv">100</span>)) <span class="sc">+</span></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Event"</span>) <span class="sc">+</span></span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Days from the notification day"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>malariaData <span class="sc">%&gt;%</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(Symptoms, Digitalization, Exam, Treatment) <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">gather</span>(TYPE, DAYS) <span class="sc">%&gt;%</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> TYPE, <span class="at">y =</span> DAYS)) <span class="sc">+</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">100</span>, <span class="dv">100</span>)) <span class="sc">+</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Event"</span>) <span class="sc">+</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Days from the notification day"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -982,37 +984,56 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>COMUNINF</strong> is the municipality the patient probably got the infection.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># muni &lt;- read_municipality(code_muni = "all", year = 2014, showProgress = FALSE) %&gt;%</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   mutate(code_muni = str_sub(code_muni, end = 6)) %&gt;%</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(as.data.frame(table(malariaData$ID_MUNICIP, dnn = list("code_muni")), responseName = "noti_muni")) %&gt;%</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(as.data.frame(table(malariaData$COMUNINF, dnn = list("code_muni")), responseName = "infec_muni")) %&gt;%</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(as.data.frame(table(malariaData$ID_MN_RESI, dnn = list("code_muni")), responseName = "resi_muni"))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>muni <span class="ot">&lt;-</span> geobr<span class="sc">::</span><span class="fu">read_municipality</span>(<span class="at">code_muni =</span> <span class="st">"all"</span>, <span class="at">year =</span> <span class="dv">2014</span>, <span class="at">showProgress =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">code_muni =</span> stringr<span class="sc">::</span><span class="fu">str_sub</span>(code_muni, <span class="at">end =</span> <span class="dv">6</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(<span class="fu">as.data.frame</span>(<span class="fu">table</span>(malariaData<span class="sc">$</span>ID_MUNICIP, <span class="at">dnn =</span> <span class="fu">list</span>(<span class="st">"code_muni"</span>)), <span class="at">responseName =</span> <span class="st">"noti_muni"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(<span class="fu">as.data.frame</span>(<span class="fu">table</span>(malariaData<span class="sc">$</span>COMUNINF, <span class="at">dnn =</span> <span class="fu">list</span>(<span class="st">"code_muni"</span>)), <span class="at">responseName =</span> <span class="st">"infec_muni"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(<span class="fu">as.data.frame</span>(<span class="fu">table</span>(malariaData<span class="sc">$</span>ID_MN_RESI, <span class="at">dnn =</span> <span class="fu">list</span>(<span class="st">"code_muni"</span>)), <span class="at">responseName =</span> <span class="st">"resi_muni"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Depending on what the aim of the study is, each of these variables can be important.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cols &lt;- c("green", "yellow","orange","red", "black") #change these as needed</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co"># breaks &lt;- c(0, 10, 100, 1000, 10000, 100000) #change these as needed</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(muni) +</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggtitle("Extra-Amazon malaria per municipality of notification") +</span></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_sf( aes(fill = noti_muni), size = .15, show.legend = TRUE) +</span></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_stepsn(breaks = breaks,</span></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co">#                     colours = cols,</span></span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="co">#                     values = scales::rescale(breaks))</span></span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(muni) +</span></span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggtitle("Extra-Amazon malaria per municipality of probable infection") +</span></span>
-<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_sf(aes(fill = infec_muni), size = .15, show.legend = TRUE)  +</span></span>
-<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_stepsn(breaks = breaks,</span></span>
-<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="co">#                     colours = cols,</span></span>
-<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="co">#                     values = scales::rescale(breaks))</span></span>
-<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(muni) +</span></span>
-<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggtitle("Extra-Amazon malaria per municipality of residence")+</span></span>
-<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_sf( aes(fill = resi_muni), size = .15, show.legend = TRUE)  +</span></span>
-<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_stepsn(breaks = breaks,</span></span>
-<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a><span class="co">#                     colours = cols,</span></span>
-<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a><span class="co">#                     values = scales::rescale(breaks))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"green"</span>, <span class="st">"yellow"</span>,<span class="st">"orange"</span>,<span class="st">"red"</span>, <span class="st">"black"</span>) <span class="co">#change these as needed</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>breaks <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">100</span>, <span class="dv">1000</span>, <span class="dv">10000</span>, <span class="dv">100000</span>) <span class="co">#change these as needed</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(muni) <span class="sc">+</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Extra-Amazon malaria per municipality of notification"</span>) <span class="sc">+</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill =</span> noti_muni), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_stepsn</span>(<span class="at">breaks =</span> breaks,</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">colours =</span> cols,</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> scales<span class="sc">::</span><span class="fu">rescale</span>(breaks))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="brazil_malaria_files/figure-html/Malaria_plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(muni) <span class="sc">+</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Extra-Amazon malaria per municipality of probable infection"</span>) <span class="sc">+</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> infec_muni), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>)  <span class="sc">+</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_stepsn</span>(<span class="at">breaks =</span> breaks,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">colours =</span> cols,</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> scales<span class="sc">::</span><span class="fu">rescale</span>(breaks))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="brazil_malaria_files/figure-html/Malaria_plot-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(muni) <span class="sc">+</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Extra-Amazon malaria per municipality of residence"</span>)<span class="sc">+</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill =</span> resi_muni), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>)  <span class="sc">+</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_stepsn</span>(<span class="at">breaks =</span> breaks,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">colours =</span> cols,</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> scales<span class="sc">::</span><span class="fu">rescale</span>(breaks))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="brazil_malaria_files/figure-html/Malaria_plot-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 <p><strong>What did you find after see the maps?</strong> Take a look of the difference between the Extra-Amazon malaria by municipality of notification and probable infection. Almost all malaria notified in the Extra-Amazon region was acquired in the Amazon region. Some people live in the Amazon region were notified in the Extra-Amazon region.</p>
 </section>
@@ -1020,32 +1041,51 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="mapping-types-of-malaria"><em>Mapping types of Malaria</em></h3>
 <p>If one wants to map them distinguishing by type, the following code can be used:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># muni &lt;- muni %&gt;%</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(as.data.frame(table(malariaData$ID_MUNICIP[malariaData$RES_EXAM == "V"], dnn = list("code_muni")), responseName = "vivax_muni")) %&gt;%</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(as.data.frame(table(malariaData$ID_MUNICIP[malariaData$RES_EXAM == "F"], dnn = list("code_muni")), responseName = "falci_muni")) %&gt;%</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(as.data.frame(table(malariaData$ID_MUNICIP[malariaData$RES_EXAM == "V+F"], dnn = list("code_muni")), responseName = "mixed_muni")) %&gt;%</span></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(as.data.frame(table(malariaData$ID_MUNICIP[malariaData$RES_EXAM == "other"], dnn = list("code_muni")), responseName = "other_muni"))</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="co"># vivax_plot &lt;- ggplot(muni) +</span></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_sf( aes(fill = vivax_muni), size = .15, show.legend = TRUE) +</span></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_viridis_c() +</span></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(subtitle = paste0("Number of P. vivax cases in Brazil 2015"), size = 8) +</span></span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_minimal()</span></span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="co"># vivax_plot</span></span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="co"># falci_plot &lt;-  ggplot(muni) +</span></span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_sf( aes(fill = falci_muni), size = .15, show.legend = TRUE) +</span></span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_viridis_c() +</span></span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(subtitle=paste0("Number of P. falciparum cases in Brazil 2015"), size = 8) +</span></span>
-<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_minimal()</span></span>
-<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a><span class="co"># falci_plot</span></span>
-<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a><span class="co"># mixed_plot &lt;-  ggplot(muni) +</span></span>
-<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_sf( aes(fill = mixed_muni), size = .15, show.legend = TRUE) +</span></span>
-<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_viridis_c() +</span></span>
-<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(subtitle=paste0("Number of mixed cases in Brazil 2015"), size = 8) +</span></span>
-<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_minimal()</span></span>
-<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a><span class="co"># mixed_plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>muni <span class="ot">&lt;-</span> muni <span class="sc">%&gt;%</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(<span class="fu">as.data.frame</span>(<span class="fu">table</span>(malariaData<span class="sc">$</span>ID_MUNICIP[malariaData<span class="sc">$</span>RES_EXAM <span class="sc">==</span> <span class="st">"V"</span>], <span class="at">dnn =</span> <span class="fu">list</span>(<span class="st">"code_muni"</span>)), <span class="at">responseName =</span> <span class="st">"vivax_muni"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(<span class="fu">as.data.frame</span>(<span class="fu">table</span>(malariaData<span class="sc">$</span>ID_MUNICIP[malariaData<span class="sc">$</span>RES_EXAM <span class="sc">==</span> <span class="st">"F"</span>], <span class="at">dnn =</span> <span class="fu">list</span>(<span class="st">"code_muni"</span>)), <span class="at">responseName =</span> <span class="st">"falci_muni"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(<span class="fu">as.data.frame</span>(<span class="fu">table</span>(malariaData<span class="sc">$</span>ID_MUNICIP[malariaData<span class="sc">$</span>RES_EXAM <span class="sc">==</span> <span class="st">"V+F"</span>], <span class="at">dnn =</span> <span class="fu">list</span>(<span class="st">"code_muni"</span>)), <span class="at">responseName =</span> <span class="st">"mixed_muni"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(<span class="fu">as.data.frame</span>(<span class="fu">table</span>(malariaData<span class="sc">$</span>ID_MUNICIP[malariaData<span class="sc">$</span>RES_EXAM <span class="sc">==</span> <span class="st">"other"</span>], <span class="at">dnn =</span> <span class="fu">list</span>(<span class="st">"code_muni"</span>)), <span class="at">responseName =</span> <span class="st">"other_muni"</span>))</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>vivax_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(muni) <span class="sc">+</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill =</span> vivax_muni), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"Number of P. vivax cases in Brazil 2015"</span>), <span class="at">size =</span> <span class="dv">8</span>) <span class="sc">+</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>vivax_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="brazil_malaria_files/figure-html/Malaria_plotType-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>falci_plot <span class="ot">&lt;-</span>  <span class="fu">ggplot</span>(muni) <span class="sc">+</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill =</span> falci_muni), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle=</span><span class="fu">paste0</span>(<span class="st">"Number of P. falciparum cases in Brazil 2015"</span>), <span class="at">size =</span> <span class="dv">8</span>) <span class="sc">+</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>falci_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="brazil_malaria_files/figure-html/Malaria_plotType-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>mixed_plot <span class="ot">&lt;-</span>  <span class="fu">ggplot</span>(muni) <span class="sc">+</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill =</span> mixed_muni), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle=</span><span class="fu">paste0</span>(<span class="st">"Number of mixed cases in Brazil 2015"</span>), <span class="at">size =</span> <span class="dv">8</span>) <span class="sc">+</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>mixed_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="brazil_malaria_files/figure-html/Malaria_plotType-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 </section>
 <section id="calculating-the-incidence" class="level3">
@@ -1053,68 +1093,106 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Sometimes, having the absolute values is helpful. But other times, the number of cases can be highly dependent on the number of inhabitants and then the incidence or other similar indicator is used. Another reason to use incidence is to make comparable the number of cases between areas and different times. Specifically for malaria, the analogous indicator, the Annual Parasite Index (API) is most common. This indicator is calculated by the number of malaria positive patients occurred in a specific time and place divided by the population per 1.000 inhabitants. This positive patients can be a new case or a relapse. Relapses are most common in malaria <em>vivax</em> infection.</p>
 <p>For this, the population data needs to be loaded from <a href="https://www.ibge.gov.br/estatisticas/sociais/populacao/9103-estimativas-de-populacao.html?edicao=31451&amp;t=resultados">IBGE</a> either manually or using the local function “get_br_pop_data” (instructions can be viewed in 0_DownloadData.md).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get_br_pop_data(2015, save=F)</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># muni &lt;-  left_join(muni, pop_2015[c("code_muni","pop")], by="code_muni")</span></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># muni$pop &lt;- as.numeric(muni$pop)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_br_pop_data</span>(<span class="dv">2015</span>, <span class="at">save=</span>F)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>muni <span class="ot">&lt;-</span>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(muni, pop_2015[<span class="fu">c</span>(<span class="st">"code_muni"</span>,<span class="st">"pop"</span>)], <span class="at">by=</span><span class="st">"code_muni"</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>muni<span class="sc">$</span>pop <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(muni<span class="sc">$</span>pop)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The incidence is then calculated by dividing the malaria cases by the population of each municipality and multiplication by 1000.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># muni$noti_inc &lt;- muni$noti_muni / muni$pop*1000</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># muni$infec_inc &lt;- muni$infec_muni / muni$pop*1000</span></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># muni$resi_inc &lt;- muni$resi_muni / muni$pop*1000</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co"># breaks2 &lt;- c(0, 5, 25, 50, 100, 250)</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="co"># noti_inci_plot &lt;- ggplot(muni) +</span></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggtitle("Incidence of malaria notifications in 2015")+</span></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_sf( aes(fill = noti_inc), size = .15, show.legend = TRUE)  +</span></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_stepsn(breaks = breaks2,</span></span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="co">#                     colours = cols,</span></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="co">#                     values = scales::rescale(breaks2))</span></span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co"># noti_inci_plot</span></span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a><span class="co"># infe_inci_plot &lt;- ggplot(muni) +</span></span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggtitle("Incidence of probable malaria infections in 2015")+</span></span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_sf(aes(fill = infec_inc), size = .15, show.legend = TRUE)  +</span></span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_stepsn(breaks = breaks2,</span></span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="co">#                     colours = cols,</span></span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a><span class="co">#                     values = scales::rescale(breaks2))</span></span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a><span class="co"># infe_inci_plot</span></span>
-<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a><span class="co"># resi_inci_plot &lt;- ggplot(muni) +</span></span>
-<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggtitle("Incidence of residents with malaria in 2015")+</span></span>
-<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_sf(aes(fill = resi_inc), size = .15, show.legend = TRUE)  +</span></span>
-<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_stepsn(breaks = breaks2,</span></span>
-<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a><span class="co">#                     colours = cols,</span></span>
-<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a><span class="co">#                     values = scales::rescale(breaks2))</span></span>
-<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a><span class="co"># resi_inci_plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>muni<span class="sc">$</span>noti_inc <span class="ot">&lt;-</span> muni<span class="sc">$</span>noti_muni <span class="sc">/</span> muni<span class="sc">$</span>pop<span class="sc">*</span><span class="dv">1000</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>muni<span class="sc">$</span>infec_inc <span class="ot">&lt;-</span> muni<span class="sc">$</span>infec_muni <span class="sc">/</span> muni<span class="sc">$</span>pop<span class="sc">*</span><span class="dv">1000</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>muni<span class="sc">$</span>resi_inc <span class="ot">&lt;-</span> muni<span class="sc">$</span>resi_muni <span class="sc">/</span> muni<span class="sc">$</span>pop<span class="sc">*</span><span class="dv">1000</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>breaks2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">250</span>)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>noti_inci_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(muni) <span class="sc">+</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Incidence of malaria notifications in 2015"</span>)<span class="sc">+</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill =</span> noti_inc), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>)  <span class="sc">+</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_stepsn</span>(<span class="at">breaks =</span> breaks2,</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">colours =</span> cols,</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> scales<span class="sc">::</span><span class="fu">rescale</span>(breaks2))</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>noti_inci_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="brazil_malaria_files/figure-html/Malaria_Incidence-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>infe_inci_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(muni) <span class="sc">+</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Incidence of probable malaria infections in 2015"</span>)<span class="sc">+</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> infec_inc), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>)  <span class="sc">+</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_stepsn</span>(<span class="at">breaks =</span> breaks2,</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">colours =</span> cols,</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> scales<span class="sc">::</span><span class="fu">rescale</span>(breaks2))</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>infe_inci_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="brazil_malaria_files/figure-html/Malaria_Incidence-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>resi_inci_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(muni) <span class="sc">+</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Incidence of residents with malaria in 2015"</span>)<span class="sc">+</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> resi_inc), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>)  <span class="sc">+</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_stepsn</span>(<span class="at">breaks =</span> breaks2,</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">colours =</span> cols,</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> scales<span class="sc">::</span><span class="fu">rescale</span>(breaks2))</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>resi_inci_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="brazil_malaria_files/figure-html/Malaria_Incidence-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 <p>If one wants to know the incidence depending on the malaria type:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># muni$vivax_inc &lt;- muni$vivax_muni / muni$pop*1000</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co"># muni$falci_inc &lt;- muni$falci_muni / muni$pop*1000</span></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co"># muni$mixed_inc &lt;- muni$mixed_muni / muni$pop*1000</span></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co"># vivax_inci_plot &lt;- ggplot(muni) +</span></span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_sf(aes(fill = vivax_inc), size = .15, show.legend = TRUE) +</span></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_viridis_c() +</span></span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(subtitle = paste0("Vivax incidence in Brazil 2015"), size = 8) +</span></span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_minimal()</span></span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="co"># vivax_inci_plot</span></span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a><span class="co"># falci_inci_plot&lt;- ggplot(muni) +</span></span>
-<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_sf( aes(fill = falci_inc), size = .15, show.legend = TRUE) +</span></span>
-<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_viridis_c()+</span></span>
-<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(subtitle = paste0("Falciparum incidence in Brazil in 2015"), size = 8) +</span></span>
-<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_minimal()</span></span>
-<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a><span class="co"># falci_inci_plot</span></span>
-<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a><span class="co"># mixed_inci_plot&lt;- ggplot(muni) +</span></span>
-<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_sf( aes(fill = mixed_inc), size = .15, show.legend = TRUE) +</span></span>
-<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_viridis_c()+</span></span>
-<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(subtitle = paste0("Mixed incidence in Brazil in 2015"), size = 8) +</span></span>
-<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_minimal()</span></span>
-<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a><span class="co"># mixed_inci_plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>muni<span class="sc">$</span>vivax_inc <span class="ot">&lt;-</span> muni<span class="sc">$</span>vivax_muni <span class="sc">/</span> muni<span class="sc">$</span>pop<span class="sc">*</span><span class="dv">1000</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>muni<span class="sc">$</span>falci_inc <span class="ot">&lt;-</span> muni<span class="sc">$</span>falci_muni <span class="sc">/</span> muni<span class="sc">$</span>pop<span class="sc">*</span><span class="dv">1000</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>muni<span class="sc">$</span>mixed_inc <span class="ot">&lt;-</span> muni<span class="sc">$</span>mixed_muni <span class="sc">/</span> muni<span class="sc">$</span>pop<span class="sc">*</span><span class="dv">1000</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>vivax_inci_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(muni) <span class="sc">+</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> vivax_inc), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"Vivax incidence in Brazil 2015"</span>), <span class="at">size =</span> <span class="dv">8</span>) <span class="sc">+</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>vivax_inci_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="brazil_malaria_files/figure-html/Malaria_TypeIncidence-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>falci_inci_plot<span class="ot">&lt;-</span> <span class="fu">ggplot</span>(muni) <span class="sc">+</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill =</span> falci_inc), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>()<span class="sc">+</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"Falciparum incidence in Brazil in 2015"</span>), <span class="at">size =</span> <span class="dv">8</span>) <span class="sc">+</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>falci_inci_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="brazil_malaria_files/figure-html/Malaria_TypeIncidence-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>mixed_inci_plot<span class="ot">&lt;-</span> <span class="fu">ggplot</span>(muni) <span class="sc">+</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill =</span> mixed_inc), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>()<span class="sc">+</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"Mixed incidence in Brazil in 2015"</span>), <span class="at">size =</span> <span class="dv">8</span>) <span class="sc">+</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>mixed_inci_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="brazil_malaria_files/figure-html/Malaria_TypeIncidence-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 
 
@@ -1551,7 +1629,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>Daniela Lührsen, HARMONIZE</p>
+<p>HARMONIZE</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
@@ -1559,14 +1637,20 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/" target="_blank">
+    <a class="nav-link" href="https://github.com/harmonize-tools" target="_blank">
       <i class="bi bi-github" role="img">
 </i> 
     </a>
   </li>  
     <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/" target="_blank">
-      <i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://harmonize-tools.github.io/" target="_blank">
+      <i class="bi bi-wrench-adjustable-circle" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.harmonize-tools.org/" target="_blank">
+      <i class="bi bi-globe" role="img">
 </i> 
     </a>
   </li>  

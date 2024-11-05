@@ -9,7 +9,7 @@
 <meta name="author" content="Daniela Luhrsen, Rachel Lowe and Raquel Lana">
 <meta name="dcterms.date" content="2022-10-27">
 
-<title>1b_DengueData – data4health</title>
+<title>Preprocessing Dengue Data – data4health</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -131,7 +131,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-home">    
         <li>
-    <a class="dropdown-item" href="./about_data4health.html">
+    <a class="dropdown-item" href="./index.html">
  <span class="dropdown-text">data4health</span></a>
   </li>  
         <li>
@@ -368,7 +368,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#download-the-data-by-microdatasus" id="toc-download-the-data-by-microdatasus" class="nav-link active" data-scroll-target="#download-the-data-by-microdatasus">Download the data by microdatasus</a></li>
+  <li><a href="#setting-up-the-r-environment" id="toc-setting-up-the-r-environment" class="nav-link active" data-scroll-target="#setting-up-the-r-environment">Setting up the R environment</a></li>
+  <li><a href="#download-the-data-by-microdatasus" id="toc-download-the-data-by-microdatasus" class="nav-link" data-scroll-target="#download-the-data-by-microdatasus">Download the data by microdatasus</a></li>
   <li><a href="#information-on-the-patient" id="toc-information-on-the-patient" class="nav-link" data-scroll-target="#information-on-the-patient">Information on the patient</a>
   <ul class="collapse">
   <li><a href="#age" id="toc-age" class="nav-link" data-scroll-target="#age"><em>Age</em></a></li>
@@ -403,7 +404,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./brazil.html">Brazil</a></li><li class="breadcrumb-item"><a href="./brazil_dengue.html">Dengue</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">1b_DengueData</h1>
+<h1 class="title">Preprocessing Dengue Data</h1>
 </div>
 
 
@@ -434,11 +435,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>This document aims at introducing dengue data to someone with no previous experience. Before starting it is necessary to have the health data, instructions on how to obtain these are in the ReadMe of this project.</p>
 <p>The steps include:</p>
-<ol start="0" type="1">
+<ol type="1">
 <li>Downloading the data</li>
 <li>Getting to know the data: detect differences between different datasets</li>
 <li>Information on the patients: Age, Sex, Pregnancy, Race</li>
-<li>Information ono the case: classification, confirmation criteria, dengue category, exam type, evolution of the case</li>
+<li>Information on the case: classification, confirmation criteria, dengue category, exam type, evolution of the case</li>
 <li>Timeline of the dengue case: distribution throughout the year, duration of cases, course of the disease</li>
 <li>Mapping spatially: Absolute cases, incidence</li>
 </ol>
@@ -448,15 +449,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p><img src="images/eye-01.png" class="img-fluid" width="24"> indicates that you will see the data in a plot</p></li>
 <li><p><img src="images/filter-01.png" class="img-fluid" width="20"> indicates that there is a opportunity to filter data (if necessary).</p></li>
 </ul>
+<section id="setting-up-the-r-environment" class="level1">
+<h1>Setting up the R environment</h1>
+<p><img src="images/idea-02.png" class="img-fluid" width="25"> In every R script,</p>
+<p>In this script we will need the following R-scripts:</p>
+<ul>
+<li><p>microdatasus: To download the health data from brazil</p></li>
+<li><p>foreign: this function is used to read dbf files</p></li>
+<li><p>read.dbc: to open the files in .dbc format</p></li>
+<li><p>readr: to open csv files</p></li>
+<li><p>purrr:</p></li>
+<li><p>ggplot2: to create the graphs</p></li>
+<li><p>lubridate: to help format the dates</p></li>
+<li><p>geobr: to download the shapefiles of brazils administrative boundaries</p></li>
+<li><p>stringr: to support string modifications</p></li>
+<li><p>patchwork:</p></li>
+<li><p>knitr: to create interactive tables</p></li>
+<li><p>scales: to rescale continuous vectors to have limits</p></li>
+<li><p>dplyr &amp; tidyr: to use functions from the “tidyverse”</p></li>
+</ul>
+<p>Other options that are being set up now include, setting a maximum waiting time for functions (i.e.&nbsp;timeout), how large numbers should be displayed (i.e. scipen) and functions are locally loaded.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load packages</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>packages  <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"tidyverse"</span>, <span class="st">"microdatasus"</span>, <span class="st">"foreign"</span>, <span class="st">"readr"</span>, <span class="st">"dplyr"</span>, <span class="st">"purrr"</span>,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">"ggplot2"</span>,<span class="st">"tidyr"</span>, <span class="st">"lubridate"</span>,<span class="st">"geobr"</span>, <span class="st">"stringr"</span>, <span class="st">"patchwork"</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>               <span class="st">"arsenal"</span>, <span class="st">"read.dbc"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>packages  <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"microdatasus"</span>, <span class="st">"foreign"</span>, <span class="st">"read.dbc"</span>, <span class="st">"readr"</span>, <span class="st">"dplyr"</span>, <span class="st">"purrr"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">"ggplot2"</span>,<span class="st">"lubridate"</span>,<span class="st">"geobr"</span>, <span class="st">"stringr"</span>, <span class="st">"patchwork"</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>               <span class="st">"arsenal"</span>, <span class="st">"knitr"</span>, <span class="st">"scales"</span>, <span class="st">"tidyr"</span>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">install.packages</span>(<span class="fu">setdiff</span>(packages, <span class="fu">rownames</span>(<span class="fu">installed.packages</span>()))))</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">lapply</span>(packages, <span class="cf">function</span>(pkg) <span class="fu">suppressMessages</span>(<span class="fu">require</span>(pkg, <span class="at">character.only =</span> <span class="cn">TRUE</span>))))</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># other options</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># set options</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen =</span> <span class="dv">999</span>)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">timeout =</span> <span class="dv">2000</span>)</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
@@ -464,22 +485,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>files.sources <span class="ot">&lt;-</span>  <span class="fu">list.files</span>(<span class="st">"R/"</span>)</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">sapply</span>(<span class="fu">paste0</span>(<span class="st">"R/"</span>, files.sources), source))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
 <section id="download-the-data-by-microdatasus" class="level1">
 <h1>Download the data by microdatasus</h1>
-<p>As described in the ReadMe, the health data from Brazil can be downloaded by many different methods: <em>microdatasus</em>, PySUS or by Filezilla <a href="ftp.datasus.gov.br">FTP link</a>. In this script, the data will be downloaded with the help of the package <em>microdatasus</em>, the following code block is an example that will download the data for the year 2015 and 2021. The dengue database is heavy and it can take time to download it. It is therefor recommended to download and save it before the analysis and to simply load the datasets once you do the analysis. (In the case of this script, run it once entirely, and then you can comment out the first code block to not download the same data over and over.)</p>
-<p>Sometimes problems with the variables occur when downloading data from mutiple years (e.g.&nbsp;2012 to 2015). The developer are already aware of this. For now, download each year one by one, then import all years using bind_rows and use an argument to import all variables as a character.</p>
+<p>As described in the <a href="./brazil_download_data.html">download instructions</a>, the health data from Brazil can be downloaded by many different methods: <em>microdatasus</em>, PySUS or by Filezilla <a href="ftp.datasus.gov.br">FTP link</a>. In this script, the data will be downloaded with the help of the package <a href="https://rfsaldanha.github.io/microdatasus/"><em>microdatasus</em></a>, the following code block is an example that will download the data for the year 2015. The dengue database is heavy and it can take time to download it. It is therefor recommended to download the data once and save it to your computer. Afterwards you can load it from your local disk every time you want to analyse it.</p>
+<p>In the case of this script, run it the first code block once (with the second code block commented out), and then you can comment out the first code block and uncomment the first code block.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># den15 &lt;- fetch_datasus(year_start = 2015, year_end = 2015, information_system = "SINAN-DENGUE")</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># den21 &lt;- fetch_datasus(year_start = 2021, year_end = 2021, information_system = "SINAN-DENGUE")</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>den15 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/den15.rds"</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>den21 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/den21.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># den15 &lt;- fetch_datasus(year_start = 2015, year_end = 2015, information_system = "SINAN-DENGUE")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<!--#  Sometimes problems with the variables occur when downloading data from mutiple years (e.g. 2012 to 2015). The developer are already aware of this. For now, download each year one by one, then import all years using bind_rows and use an argument to import all variables as a character.-->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>den15 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/den15.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="understanding-the-data-structure" class="level4">
 <h4 class="anchored" data-anchor-id="understanding-the-data-structure">Understanding the data structure</h4>
 <p><img src="images/idea-02.png" class="img-fluid" width="25"> Specifically, it contains 139 variables, the explanation for each variable can be found on the <a href="portalsinan.saude.gov.br/images/documentos/Agravos/Dengue/DIC_DADOS_ONLINE.pdf">SINAN webpage</a> from the Ministry of Health of Brazil. However, it is only available in Portuguese. A translation into English can be found in <a href="Workspace/Dictionary_Dengue.csv">this csv file</a>. This file also contains the decodification for all numerical categories. A small overview of this file can be seen below:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>varEng <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"workspace/Dictionary_Dengue.csv"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(varEng[,<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>varEng <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"workspace/Dictionary_Dengue.csv"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(varEng[,<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <thead>
@@ -533,17 +556,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Some of these variables are mandatory to notify, others are not, which leads to incomplete datasets. The dataframe <strong>NAcount</strong> shows the percentage of NA-values for each variable, below you can see it graphically for some of the variables. Here, we chose as the main database to explore the variables, den15, a database you can download by the FTP link.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>NAcount <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span> <span class="fu">map</span>(<span class="sc">~</span><span class="fu">mean</span>(<span class="fu">is.na</span>(.)))</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>NAcount <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">unlist</span>(NAcount))</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>NAcount[<span class="st">"var"</span>] <span class="ot">&lt;-</span> <span class="fu">rownames</span>(NAcount)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>NAcount <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span> purrr<span class="sc">::</span><span class="fu">map</span>(<span class="sc">~</span><span class="fu">mean</span>(<span class="fu">is.na</span>(.)))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>NAcount <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">unlist</span>(NAcount))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>NAcount[<span class="st">"var"</span>] <span class="ot">&lt;-</span> <span class="fu">rownames</span>(NAcount)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><img src="images/eye-01.png" class="img-fluid" width="24"> You can visualise it here.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(NAcount[<span class="dv">35</span><span class="sc">:</span><span class="dv">55</span>,], <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(var, unlist.NAcount.), <span class="at">y =</span> unlist.NAcount.))<span class="sc">+</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">width =</span> <span class="fl">0.9</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="dv">5</span>))<span class="sc">+</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percentage of NAs in each column"</span>)<span class="sc">+</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Variables"</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(NAcount[<span class="dv">35</span><span class="sc">:</span><span class="dv">55</span>,], <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(var, unlist.NAcount.), <span class="at">y =</span> unlist.NAcount.))<span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">width =</span> <span class="fl">0.9</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="dv">5</span>))<span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percentage of NAs in each column"</span>)<span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Variables"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -554,7 +577,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>The variables with complete datasets are:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>NAcount<span class="sc">$</span>var[NAcount<span class="sc">$</span>unlist.NAcount. <span class="sc">==</span> <span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>NAcount<span class="sc">$</span>var[NAcount<span class="sc">$</span>unlist.NAcount. <span class="sc">==</span> <span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "TP_NOT"     "ID_AGRAVO"  "DT_NOTIFIC" "SEM_NOT"    "NU_ANO"    
 [6] "SG_UF_NOT"  "ID_MUNICIP" "SEM_PRI"    "NU_IDADE_N"</code></pre>
@@ -563,25 +586,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="images/filter-01.png" class="img-fluid" width="20"> To avoid working with unnecessary data, it is useful to filter out the variables that will not be used. Below is a line of code on how to select only the needed variables.</p>
 <p>Change this list as needed!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sel_var <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"DT_NOTIFIC"</span>,  <span class="st">"ID_MUNICIP"</span>,  <span class="st">"DT_SIN_PRI"</span>, <span class="st">"DT_NASC"</span>, <span class="st">"NU_IDADE_N"</span>, </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>             <span class="st">"CS_SEXO"</span>, <span class="st">"CS_GESTANT"</span>, <span class="st">"CS_RACA"</span>, <span class="st">"ID_MN_RESI"</span>,  <span class="st">"COMUNINF"</span>, </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">"CLASSI_FIN"</span>, <span class="st">"CRITERIO"</span>,  <span class="st">"EVOLUCAO"</span>, <span class="st">"DT_OBITO"</span>, <span class="st">"DT_SORO"</span>,  </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>             <span class="st">"DT_ENCERRA"</span>, <span class="st">"RES_CHIKS1"</span>,<span class="st">"RES_CHIKS2"</span>, <span class="st">"RESUL_PRNT"</span>,<span class="st">"RESUL_SORO"</span>,<span class="st">"RESUL_NS1"</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>             <span class="st">"RESUL_VI_N"</span>, <span class="st">"RESUL_PCR_"</span>,<span class="st">"HISTOPA_N"</span>,<span class="st">"IMUNOH_N"</span>, <span class="st">"MUNICIPIO"</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>den15 <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">all_of</span>(sel_var))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>sel_var <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"DT_NOTIFIC"</span>,  <span class="st">"ID_MUNICIP"</span>,  <span class="st">"DT_SIN_PRI"</span>, <span class="st">"DT_NASC"</span>, <span class="st">"NU_IDADE_N"</span>, </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>             <span class="st">"CS_SEXO"</span>, <span class="st">"CS_GESTANT"</span>, <span class="st">"CS_RACA"</span>, <span class="st">"ID_MN_RESI"</span>,  <span class="st">"COMUNINF"</span>, </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">"CLASSI_FIN"</span>, <span class="st">"CRITERIO"</span>,  <span class="st">"EVOLUCAO"</span>, <span class="st">"DT_OBITO"</span>, <span class="st">"DT_SORO"</span>,  </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>             <span class="st">"DT_ENCERRA"</span>, <span class="st">"RES_CHIKS1"</span>,<span class="st">"RES_CHIKS2"</span>, <span class="st">"RESUL_PRNT"</span>,<span class="st">"RESUL_SORO"</span>,<span class="st">"RESUL_NS1"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>             <span class="st">"RESUL_VI_N"</span>, <span class="st">"RESUL_PCR_"</span>,<span class="st">"HISTOPA_N"</span>,<span class="st">"IMUNOH_N"</span>, <span class="st">"MUNICIPIO"</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>den15 <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(dplyr<span class="sc">::</span><span class="fu">all_of</span>(sel_var))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<!-- ### VER Ver duplicados antes aqui, ver a comparaçao entre os dados do FTP e solicitados. Parece que precisa de data de nascimento para deduplicar. Probably we can't deduplicate the files from FTP. Check well the files from the MS. -->
+<!-- ### VER Ver duplicados antes aqui, ver a comparaçao entre os dados do
+FTP e solicitados. Parece que precisa de data de nascimento para deduplicar.
+Probably we can't deduplicate the files from FTP. Check well the files from the
+MS. There is library in Python that can help
+https://pypi.org/project/pandas-dedupe/. ver 2015, esse veio do ministério 
+::: {.cell}
+
+```{.checking .cell-code}
+# Filtro: duplicidade ----
+# den15 %>%
+#   distinct(NU_NOTIFIC, DT_NOTIFIC, ID_MUNICIP, .keep_all = T) %>% dplyr::count()
+#
+# den15 %>%
+#   distinct(NU_NOTIFIC, DT_NOTIFIC, ID_MUNICIP, DT_NASC, ID_UNIDADE, .keep_all = T) %>% dplyr::count()
+```
+:::
+--\>
+
 <!-- DL: Tego que terminar esto -->
-<p>There is library in Python that can help https://pypi.org/project/pandas-dedupe/. ver 2015, esse veio do ministério</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtro: duplicidade ----</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># den15 %&gt;%</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   distinct(NU_NOTIFIC, DT_NOTIFIC, ID_MUNICIP, .keep_all = T) %&gt;% count()</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># den15 %&gt;%</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   distinct(NU_NOTIFIC, DT_NOTIFIC, ID_MUNICIP, DT_NASC, ID_UNIDADE, .keep_all = T) %&gt;% count()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 </section>
 </section>
 <section id="information-on-the-patient" class="level1">
@@ -591,14 +622,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="images/idea-02.png" class="img-fluid" width="25"> For dengue, there are two methods to obtain the age of the patients. First, using the data about the patients birth-date, which is provided in the variable <strong>DT_NASC</strong>. The age can be calculated by subtracting the birth-date from the notification date.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>den15 <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">AGE_BIRTHDAY =</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">AGE_BIRTHDAY =</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>             <span class="fu">ifelse</span>(<span class="fu">format</span>(den15<span class="sc">$</span>DT_NASC, <span class="st">"%m-%d"</span>) <span class="sc">&gt;</span> <span class="fu">format</span>(den15<span class="sc">$</span>DT_NOTIFIC, <span class="st">"%m-%d"</span>),</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">year</span>(den15<span class="sc">$</span>DT_NOTIFIC)<span class="sc">-</span><span class="fu">year</span>(den15<span class="sc">$</span>DT_NASC)<span class="sc">-</span><span class="dv">1</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">year</span>(den15<span class="sc">$</span>DT_NOTIFIC)<span class="sc">-</span><span class="fu">year</span>(den15<span class="sc">$</span>DT_NASC)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                    lubridate<span class="sc">::</span><span class="fu">year</span>(den15<span class="sc">$</span>DT_NOTIFIC)<span class="sc">-</span>lubridate<span class="sc">::</span><span class="fu">year</span>(den15<span class="sc">$</span>DT_NASC)<span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                    lubridate<span class="sc">::</span><span class="fu">year</span>(den15<span class="sc">$</span>DT_NOTIFIC)<span class="sc">-</span>lubridate<span class="sc">::</span><span class="fu">year</span>(den15<span class="sc">$</span>DT_NASC)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><img src="images/eye-01.png" class="img-fluid" width="24"> You can visualise it here</p>
+<p><img src="images/eye-01.png" class="img-fluid" width="24"> You can visualise it here:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(den15, <span class="fu">aes</span>(<span class="at">x =</span> AGE_BIRTHDAY))<span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(den15, <span class="fu">aes</span>(<span class="at">x =</span> AGE_BIRTHDAY))<span class="sc">+</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>,<span class="at">color=</span><span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>)<span class="sc">+</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">100</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>,</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(den15<span class="sc">$</span>AGE_BIRTHDAY)), <span class="st">" NA values"</span>))<span class="sc">+</span></span>
@@ -619,7 +650,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>den15  <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">AGE_CODE =</span> <span class="fu">case_when</span>(NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">120</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(NU_IDADE_N), <span class="co"># assumes that non-codified data means that the age in years was given</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">AGE_CODE =</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">120</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(NU_IDADE_N), <span class="co"># assumes that non-codified data means that the age in years was given</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">120</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">1000</span> <span class="sc">~</span> <span class="cn">NA_real_</span>,</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">1000</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">2366</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">2366</span> <span class="sc">&amp;</span> NU_IDADE_N <span class="sc">&lt;</span> <span class="dv">3000</span> <span class="sc">~</span> <span class="cn">NA_real_</span>,</span>
@@ -629,7 +660,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>                           NU_IDADE_N <span class="sc">&gt;=</span> <span class="dv">4120</span> <span class="sc">~</span> <span class="cn">NA_real_</span>,</span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>                           <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_real_</span>))</span>
 <span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(den15[den15<span class="sc">$</span>AGE_CODE <span class="sc">&lt;</span> <span class="dv">120</span>,], <span class="fu">aes</span>(<span class="at">x =</span> AGE_CODE))<span class="sc">+</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(den15[den15<span class="sc">$</span>AGE_CODE <span class="sc">&lt;</span> <span class="dv">120</span>,], <span class="fu">aes</span>(<span class="at">x =</span> AGE_CODE))<span class="sc">+</span></span>
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>,<span class="at">color=</span><span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>)<span class="sc">+</span></span>
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">100</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>,</span>
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(den15<span class="sc">$</span>AGE_CODE)), <span class="st">" NA values"</span>))<span class="sc">+</span></span>
@@ -647,7 +678,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The two histograms are very similar, however there is a noticeable difference in the amount of people aged 0. Below are the first few lines of cases where the two calculated ages differ:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>compare_age <span class="ot">&lt;-</span> den15[(den15<span class="sc">$</span>AGE_BIRTHDAY <span class="sc">-</span> den15<span class="sc">$</span>AGE_CODE) <span class="sc">&gt;</span><span class="dv">1</span>,] <span class="sc">%&gt;%</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(DT_NASC, NU_IDADE_N, AGE_CODE, AGE_BIRTHDAY)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(DT_NASC, NU_IDADE_N, AGE_CODE, AGE_BIRTHDAY)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(compare_age[<span class="sc">!</span><span class="fu">is.na</span>(compare_age<span class="sc">$</span>DT_NASC),]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -707,7 +738,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 </div>
 </div>
-<p><img src="images/filter-01.png" class="img-fluid" width="20"> There are many people with an age code of 0, but with an birthdate, that indicates a diferent age. Another common way to filter inconsistencies is to discard people above the age of 120.</p>
+<p><img src="images/filter-01.png" class="img-fluid" width="20"> There are many people with an age code of 0, but with an birthdate, that indicates a different age. Another common way to filter inconsistencies is to discard people above the age of 120.</p>
 <!-- Introduce line of code to filter. -->
 </section>
 <section id="sex-of-the-patients" class="level3">
@@ -715,14 +746,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="images/idea-03.png" class="img-fluid" width="23"> The sex of the patients is given by <strong>CS_SEXO</strong>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>den15 <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">CS_SEXO =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(CS_SEXO <span class="sc">==</span> <span class="st">"F"</span> <span class="sc">~</span> <span class="st">"Female"</span>,</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">CS_SEXO =</span> <span class="fu">as.factor</span>(dplyr<span class="sc">::</span><span class="fu">case_when</span>(CS_SEXO <span class="sc">==</span> <span class="st">"F"</span> <span class="sc">~</span> <span class="st">"Female"</span>,</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                                       CS_SEXO <span class="sc">==</span> <span class="st">"M"</span> <span class="sc">~</span> <span class="st">"Male"</span>,</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                                       CS_SEXO <span class="sc">==</span> <span class="st">"I"</span> <span class="sc">~</span> <span class="st">"Ignored"</span>,</span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                                       <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"NA"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><img src="images/eye.png" class="img-fluid" width="30" alt="Learn"> A bar plot of its distribution can be seen below:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(den15, <span class="fu">aes</span>(<span class="at">x =</span> CS_SEXO, <span class="at">fill=</span>CS_SEXO))<span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(den15, <span class="fu">aes</span>(<span class="at">x =</span> CS_SEXO, <span class="at">fill=</span>CS_SEXO))<span class="sc">+</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>()<span class="sc">+</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Sex distribution of dengue cases in 2015"</span>)<span class="sc">+</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Sex of the patient"</span>, <span class="at">y =</span> <span class="st">"Count"</span>, <span class="at">fill=</span><span class="st">"Sex"</span>)<span class="sc">+</span></span>
@@ -743,21 +774,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="images/idea-03.png" class="img-fluid" width="23"> Another related variable is <strong>CS_GESTANT</strong>, which indicates whether the patient is pregnant. Since only women below a certain age can get pregnant this is another way to check for inconsistencies.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>pregnant <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>((CS_GESTANT <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">2</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span><span class="dv">3</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>((CS_GESTANT <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">2</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span><span class="dv">3</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>()</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>mpreg <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CS_SEXO <span class="sc">==</span> <span class="st">"M"</span> <span class="sc">&amp;</span> (CS_GESTANT <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">2</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span><span class="dv">3</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(CS_SEXO <span class="sc">==</span> <span class="st">"M"</span> <span class="sc">&amp;</span> (CS_GESTANT <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">2</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span><span class="dv">3</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>()</span>
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>pover50 <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(AGE_CODE <span class="sc">&gt;</span> <span class="dv">50</span> <span class="sc">&amp;</span> (CS_GESTANT <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">2</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span><span class="dv">3</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(AGE_CODE <span class="sc">&gt;</span> <span class="dv">50</span> <span class="sc">&amp;</span> (CS_GESTANT <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">2</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span><span class="dv">3</span> <span class="sc">|</span> CS_GESTANT <span class="sc">==</span> <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><img src="images/filter.png" class="img-fluid" width="20" alt="Filter"> Out of 13382 pregnant patients, there are 0 pregnant males and 764 pregnant women over the age of 50. Again, depending on the aim of the study, these patients could be excluded using the following line.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>den15 <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(CS_GESTANT <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>) <span class="sc">&amp;</span> CS_SEXO <span class="sc">==</span> <span class="st">"M"</span>) <span class="sc">&amp;</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span>(CS_GESTANT <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>) <span class="sc">&amp;</span> CS_SEXO <span class="sc">==</span> <span class="st">"M"</span>) <span class="sc">&amp;</span> </span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!</span>(CS_GESTANT <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>) <span class="sc">&amp;</span> AGE_CODE <span class="sc">&gt;</span> <span class="dv">50</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
@@ -766,7 +797,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="images/idea.png" class="img-fluid" alt="Learn" width="20"> The race/color of the patient is given by <strong>CS_RACA</strong>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>den15 <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">CS_RACA =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(CS_RACA <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"White"</span>,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">CS_RACA =</span> <span class="fu">as.factor</span>(dplyr<span class="sc">::</span><span class="fu">case_when</span>(CS_RACA <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"White"</span>,</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                                       CS_RACA <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Black"</span>,</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                                       CS_RACA <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"Yellow"</span>,</span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                                       CS_RACA <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Brown"</span>,</span>
@@ -776,7 +807,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><img src="images/eye.png" class="img-fluid" alt="Learn" width="30"></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(den15, <span class="fu">aes</span>(<span class="at">x =</span> CS_RACA, <span class="at">fill=</span>CS_RACA)) <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(den15, <span class="fu">aes</span>(<span class="at">x =</span> CS_RACA, <span class="at">fill=</span>CS_RACA)) <span class="sc">+</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Race/Color distribution of dengue cases in 2015"</span>) <span class="sc">+</span></span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">stat =</span> <span class="st">'count'</span>,</span>
@@ -803,8 +834,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>1 - Classic Dengue Fever 2 - Severe Dengue 3 - Dengue Hemorrhagic Fever - DHF 4 - Dengue Shock Syndrome 5 - Discarded 8 - Inconclusive 10 - Dengue 11 - Dengue with warning signs) 12 - Severe Dengue 13 - Chikungunya</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>classification <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">CLASSI_FIN =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(CLASSI_FIN <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Dengue"</span>,</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>   dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">CLASSI_FIN =</span> <span class="fu">as.factor</span>(dplyr<span class="sc">::</span><span class="fu">case_when</span>(CLASSI_FIN <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Dengue"</span>,</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                                      CLASSI_FIN <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Severe Dengue"</span>,</span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                                      CLASSI_FIN <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"Dengue Hemorrhagic Fever"</span>,</span>
 <span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>                                      CLASSI_FIN <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Dengue Shock Syndrome"</span>,</span>
@@ -818,7 +849,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><img src="images/eye.png" class="img-fluid" alt="Learn" width="30"></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(classification) <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(classification) <span class="sc">+</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> CLASSI_FIN, <span class="at">fill=</span>CLASSI_FIN)) <span class="sc">+</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">stat =</span> <span class="st">'count'</span>,</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>((<span class="fu">after_stat</span>(count))<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">after_stat</span>(count)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%"</span>),</span>
@@ -826,7 +857,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Classification category"</span>,</span>
 <span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">"Count"</span>,</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">title=</span><span class="st">"Final classification of dengue cases in 2021"</span>,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">title=</span><span class="st">"Final classification of dengue cases in 2015"</span>,</span>
 <span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill=</span> <span class="st">"Classification"</span>)<span class="sc">+</span></span>
 <span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -837,7 +868,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p><img src="images/filter.png" class="img-fluid" alt="Filter" width="20"> Almost 29.1% of the cases in 2021 were <strong>discarded</strong>. If a study only considers <strong>probable</strong> dengue cases, these discarded cases, as well as those without classification, should be discarded.</p>
+<p><img src="images/filter.png" class="img-fluid" alt="Filter" width="20"> Almost 29.1% of the cases in 2015 were <strong>discarded</strong>. If a study only considers <strong>probable</strong> dengue cases, these discarded cases, as well as those without classification, should be discarded.</p>
 </section>
 <section id="confirmation-criteria-of-the-cases" class="level3">
 <h3 class="anchored" data-anchor-id="confirmation-criteria-of-the-cases"><em>Confirmation criteria of the cases</em></h3>
@@ -849,12 +880,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>criteria <span class="ot">&lt;-</span>  den15 <span class="sc">%&gt;%</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(CRITERIO, <span class="at">name =</span> <span class="st">"count"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percentage =</span> <span class="fu">prop.table</span>(count),</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>(CRITERIO, <span class="at">name =</span> <span class="st">"count"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">percentage =</span> <span class="fu">prop.table</span>(count),</span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">category =</span> <span class="fu">c</span>(<span class="st">"Laboratory"</span>, <span class="st">"Clinical epidimiological"</span>,<span class="st">"Under investigation"</span>,<span class="st">"Unknown"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(criteria, <span class="fu">aes</span>(<span class="at">x =</span> category, <span class="at">y =</span> count, <span class="at">fill =</span> category)) <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(criteria, <span class="fu">aes</span>(<span class="at">x =</span> category, <span class="at">y =</span> count, <span class="at">fill =</span> category)) <span class="sc">+</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(percentage <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%"</span>)),</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_stack</span>(<span class="at">vjust =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
@@ -895,8 +926,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>exams <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CRITERIO <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="st">'Serological exam 1 (Chikungunya)'</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(RES_CHIKS1) <span class="sc">&amp;</span> RES_CHIKS1 <span class="sc">!=</span> <span class="dv">4</span> ),</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(CRITERIO <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="st">'Serological exam 1 (Chikungunya)'</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(RES_CHIKS1) <span class="sc">&amp;</span> RES_CHIKS1 <span class="sc">!=</span> <span class="dv">4</span> ),</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Serological exam 2 (Chikungunya)'</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(RES_CHIKS2) <span class="sc">&amp;</span> RES_CHIKS2 <span class="sc">!=</span> <span class="dv">4</span>),</span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>            <span class="st">'PRNT exam'</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(RESUL_PRNT) <span class="sc">&amp;</span> RESUL_PRNT <span class="sc">!=</span> <span class="dv">4</span>),</span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Serological exam (dengue)'</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(RESUL_SORO) <span class="sc">&amp;</span> RESUL_SORO <span class="sc">!=</span> <span class="dv">4</span>),</span>
@@ -908,7 +939,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>exams <span class="ot">&lt;-</span>  <span class="fu">data.frame</span>(<span class="at">var=</span> <span class="fu">colnames</span>(exams), <span class="at">val=</span> <span class="fu">t</span>(exams))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(exams, <span class="fu">aes</span>(<span class="at">x =</span> var, <span class="at">y =</span> val, <span class="at">fill=</span>val)) <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(exams, <span class="fu">aes</span>(<span class="at">x =</span> var, <span class="at">y =</span> val, <span class="at">fill=</span>val)) <span class="sc">+</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>,<span class="fu">aes</span>(<span class="fu">reorder</span>(var, val), val)) <span class="sc">+</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Frequency of each lab exam performed for dengue cases in 2015"</span>) <span class="sc">+</span></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Exams"</span>) <span class="sc">+</span></span>
@@ -917,7 +948,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="brazil_dengue_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="brazil_dengue_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -929,15 +960,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="images/idea-03.png" class="img-fluid" width="23"> Finally, the variable <strong>EVOLUCAO</strong> defines the outcome of each dengue case.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>evolution <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">EVOLUCAO =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(EVOLUCAO <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Cured"</span>,</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>   dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">EVOLUCAO =</span> <span class="fu">as.factor</span>(dplyr<span class="sc">::</span><span class="fu">case_when</span>(EVOLUCAO <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Cured"</span>,</span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>                                    EVOLUCAO <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Death by </span><span class="sc">\n</span><span class="st">illness"</span>,</span>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>                                    EVOLUCAO <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"Death by </span><span class="sc">\n</span><span class="st">other cause"</span>,</span>
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>                                    EVOLUCAO <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Death under </span><span class="sc">\n</span><span class="st">investigation"</span>,</span>
 <span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>                                    EVOLUCAO <span class="sc">==</span> <span class="dv">9</span> <span class="sc">~</span> <span class="st">"Ignored"</span>,</span>
 <span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>                                    <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"NA"</span>)))</span>
 <span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(evolution) <span class="sc">+</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(evolution) <span class="sc">+</span></span>
 <span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> EVOLUCAO, <span class="at">fill=</span> EVOLUCAO)) <span class="sc">+</span></span>
 <span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">stat =</span> <span class="st">'count'</span>,</span>
 <span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">round</span>((<span class="fu">after_stat</span>(count))<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">after_stat</span>(count)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%"</span>),</span>
@@ -961,13 +992,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="images/idea-03.png" class="img-fluid" width="23"> The date of the first time that a potential dengue patient contacts the medical authorities is recorded as <strong>DT_NOTIF</strong>. This variable can be used to see clear temporal patterns throughout the year. Below, there is the annual distribution of dengue notifications in 2015, plotted at a temporal resolution of epidemiological week. In an epidemiological week, the week starts on Sunday.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>dengueEpiWeek <span class="ot">&lt;-</span> den15 <span class="sc">%&gt;%</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">epiweek =</span> <span class="fu">paste0</span>(<span class="fu">sprintf</span>(<span class="st">"%02d"</span>,<span class="fu">epiweek</span>(DT_NOTIFIC)), <span class="st">"-2015"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(epiweek) <span class="sc">%&gt;%</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(epiweek, count)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">epiweek =</span> <span class="fu">paste0</span>(<span class="fu">sprintf</span>(<span class="st">"%02d"</span>,lubridate<span class="sc">::</span><span class="fu">epiweek</span>(DT_NOTIFIC)), <span class="st">"-2015"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(epiweek) <span class="sc">%&gt;%</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">count =</span> dplyr<span class="sc">::</span><span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(epiweek, count)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dengueEpiWeek, <span class="fu">aes</span>(<span class="at">x =</span> epiweek, <span class="at">y =</span> count)) <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(dengueEpiWeek, <span class="fu">aes</span>(<span class="at">x =</span> epiweek, <span class="at">y =</span> count)) <span class="sc">+</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>, <span class="at">color=</span><span class="st">"darkgrey"</span>,<span class="at">alpha =</span> <span class="fl">0.7</span>)<span class="sc">+</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="cn">Inf</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>,</span>
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(den15<span class="sc">$</span>DT_NOTIFIC)), <span class="st">" NA values"</span>)) <span class="sc">+</span></span>
@@ -979,7 +1010,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="brazil_dengue_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="brazil_dengue_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -993,7 +1024,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>duration <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(den15<span class="sc">$</span>DT_ENCERRA <span class="sc">-</span> den15<span class="sc">$</span>DT_NOTIFIC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">duration =</span> duration[duration <span class="sc">&lt;</span> <span class="dv">100</span>]), <span class="fu">aes</span>(<span class="at">x =</span> duration)) <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">duration =</span> duration[duration <span class="sc">&lt;</span> <span class="dv">100</span>]), <span class="fu">aes</span>(<span class="at">x =</span> duration)) <span class="sc">+</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">100</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>,<span class="at">color=</span><span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>)<span class="sc">+</span></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="cn">Inf</span>, <span class="at">y =</span> <span class="cn">Inf</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>,</span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(<span class="fu">is.na</span>(den15<span class="sc">$</span>DT_ENCERRA)), <span class="st">" NA values"</span>)) <span class="sc">+</span></span>
@@ -1006,7 +1037,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="brazil_dengue_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="brazil_dengue_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1021,10 +1052,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">B_SORO =</span> <span class="fu">as.numeric</span>(den15<span class="sc">$</span>DT_SORO <span class="sc">-</span> den15<span class="sc">$</span>DT_NOTIFIC),</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">C_DEAD =</span> <span class="fu">as.numeric</span>(den15<span class="sc">$</span>DT_OBITO <span class="sc">-</span> den15<span class="sc">$</span>DT_NOTIFIC),</span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">D_TOTAL =</span> <span class="fu">as.numeric</span>(den15<span class="sc">$</span>DT_ENCERRA <span class="sc">-</span> den15<span class="sc">$</span>DT_NOTIFIC))</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>long <span class="ot">&lt;-</span> <span class="fu">gather</span>(time, TYPE, DAYS, A_SYMP<span class="sc">:</span>D_TOTAL)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>long <span class="ot">&lt;-</span> tidyr<span class="sc">::</span><span class="fu">gather</span>(time, TYPE, DAYS, A_SYMP<span class="sc">:</span>D_TOTAL)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(long, <span class="fu">aes</span>(<span class="at">x =</span> TYPE, <span class="at">y =</span> DAYS)) <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(long, <span class="fu">aes</span>(<span class="at">x =</span> TYPE, <span class="at">y =</span> DAYS)) <span class="sc">+</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">100</span>, <span class="dv">100</span>)) <span class="sc">+</span></span>
 <span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Event"</span>,</span>
@@ -1037,7 +1068,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="brazil_dengue_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="brazil_dengue_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1051,8 +1082,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="absolute-cases"><em>Absolute cases</em></h3>
 <p><img src="images/idea-03.png" class="img-fluid" width="23"> There is of course also spatial data in the datasets. Before beginning the analysis, it is necessary to download the shapefiles of Brazils municipalities. This can be done via the <em>geobr</em> package (more info on this in 0_DownloadData.md). However, the municipality code given by geobr is one digit too long and has to be shortened to 6 digits.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>muni <span class="ot">&lt;-</span> <span class="fu">read_municipality</span>(<span class="at">code_muni =</span> <span class="st">"all"</span>, <span class="at">year =</span> <span class="dv">2015</span>, <span class="at">showProgress =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">code_muni =</span> <span class="fu">str_sub</span>(code_muni, <span class="at">end =</span> <span class="dv">6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>muni <span class="ot">&lt;-</span> geobr<span class="sc">::</span><span class="fu">read_municipality</span>(<span class="at">code_muni =</span> <span class="st">"all"</span>, <span class="at">year =</span> <span class="dv">2015</span>, <span class="at">showProgress =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">code_muni =</span> stringr<span class="sc">::</span><span class="fu">str_sub</span>(code_muni, <span class="at">end =</span> <span class="dv">6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>In total, the dataset refers to 4 different locations:</p>
 <ul>
@@ -1067,28 +1098,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>resi <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">table</span>(den15<span class="sc">$</span>ID_MN_RESI, <span class="at">dnn =</span> <span class="fu">list</span>(<span class="st">"code_muni"</span>)), <span class="at">responseName =</span> <span class="st">"resi_muni"</span>)</span>
 <span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>hosp <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">table</span>(den15<span class="sc">$</span>MUNICIPIO, <span class="at">dnn =</span> <span class="fu">list</span>(<span class="st">"code_muni"</span>)), <span class="at">responseName =</span> <span class="st">"hosp_muni"</span>)</span>
 <span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>allmuni <span class="ot">&lt;-</span> <span class="fu">left_join</span>(muni, noti) <span class="sc">%&gt;%</span></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(., infec) <span class="sc">%&gt;%</span></span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(., resi) <span class="sc">%&gt;%</span></span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(., hosp)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>allmuni <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">left_join</span>(muni, noti) <span class="sc">%&gt;%</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(., infec) <span class="sc">%&gt;%</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(., resi) <span class="sc">%&gt;%</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(., hosp)</span>
 <span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"green"</span>, <span class="st">"yellow"</span>,<span class="st">"orange"</span>,<span class="st">"red"</span>, <span class="st">"black"</span>)</span>
 <span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>breaks <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">10</span>,<span class="dv">100</span>,<span class="dv">1000</span>,<span class="dv">10000</span>,<span class="dv">100000</span>)</span>
-<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>noti <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>noti <span class="ot">&lt;-</span> ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
 <span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Notification municipality"</span>)<span class="sc">+</span></span>
 <span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill=</span>noti_muni), <span class="at">size=</span>.<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
 <span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_stepsn</span>(<span class="at">breaks =</span> breaks,</span>
 <span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>                    <span class="at">colours =</span> cols,</span>
 <span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values=</span> scales<span class="sc">::</span><span class="fu">rescale</span>(breaks))</span>
 <span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>infec <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>infec <span class="ot">&lt;-</span> ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
 <span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Probable infections municipality"</span>)<span class="sc">+</span></span>
 <span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill=</span>infec_muni), <span class="at">size=</span>.<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>)  <span class="sc">+</span></span>
 <span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_stepsn</span>(<span class="at">breaks =</span> breaks,</span>
 <span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>                    <span class="at">colours =</span> cols,</span>
 <span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values=</span> scales<span class="sc">::</span><span class="fu">rescale</span>(breaks))</span>
 <span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a>resi <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a>resi <span class="ot">&lt;-</span> ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
 <span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Residence municipality"</span>)<span class="sc">+</span></span>
 <span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill=</span>resi_muni), <span class="at">size=</span>.<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>)  <span class="sc">+</span></span>
 <span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_stepsn</span>(<span class="at">breaks =</span> breaks,</span>
@@ -1121,7 +1152,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_br_pop_data</span>(<span class="dv">2015</span>, <span class="at">save=</span>F)</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>allmuni <span class="ot">&lt;-</span>  <span class="fu">left_join</span>(allmuni, pop_2015[<span class="fu">c</span>(<span class="st">"code_muni"</span>,<span class="st">"pop"</span>)], <span class="at">by=</span><span class="st">"code_muni"</span>)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>allmuni <span class="ot">&lt;-</span>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(allmuni, pop_2015[<span class="fu">c</span>(<span class="st">"code_muni"</span>,<span class="st">"pop"</span>)], <span class="at">by=</span><span class="st">"code_muni"</span>)</span>
 <span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>allmuni<span class="sc">$</span>pop <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(allmuni<span class="sc">$</span>pop)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The incidence is then calculated by dividing the dengue cases by the population of each municipality and multiplicating it by 100.000.</p>
@@ -1132,7 +1163,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>allmuni<span class="sc">$</span>hosp_inc <span class="ot">&lt;-</span> allmuni<span class="sc">$</span>hosp_muni <span class="sc">/</span> allmuni<span class="sc">$</span>pop <span class="sc">*</span> <span class="dv">100000</span></span>
 <span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Population</span></span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
 <span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Population in Brazil"</span>)<span class="sc">+</span></span>
 <span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill =</span> pop), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>)  <span class="sc">+</span></span>
 <span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_stepsn</span>(<span class="at">breaks =</span> breaks,</span>
@@ -1147,25 +1178,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Incidence</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>breaks2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">5</span>,<span class="dv">25</span>,<span class="dv">50</span>,<span class="dv">100</span>, <span class="dv">250</span>)</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>noti_inc <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>noti_inc <span class="ot">&lt;-</span> ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
 <span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Incidence of dengue notifications in 2015"</span>)<span class="sc">+</span></span>
 <span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill =</span> noti_inc), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>)  <span class="sc">+</span></span>
 <span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_stepsn</span>(<span class="at">breaks =</span> breaks2,</span>
 <span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">colours =</span> cols,</span>
 <span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> scales<span class="sc">::</span><span class="fu">rescale</span>(breaks2))</span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>infec_inc <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>infec_inc <span class="ot">&lt;-</span> ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
 <span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Incidence of probable dengue infections in 2015"</span>)<span class="sc">+</span></span>
 <span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill =</span> infec_inc), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>)  <span class="sc">+</span></span>
 <span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_stepsn</span>(<span class="at">breaks =</span> breaks2,</span>
 <span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>                    <span class="at">colours =</span> cols,</span>
 <span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> scales<span class="sc">::</span><span class="fu">rescale</span>(breaks2))</span>
-<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>resi_inc <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>resi_inc <span class="ot">&lt;-</span> ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
 <span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Incidence of residents with dengue in 2015"</span>)<span class="sc">+</span></span>
 <span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill =</span> resi_inc), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>)  <span class="sc">+</span></span>
 <span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_stepsn</span>(<span class="at">breaks =</span> breaks2,</span>
 <span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>                    <span class="at">colours =</span> cols,</span>
 <span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> scales<span class="sc">::</span><span class="fu">rescale</span>(breaks2))</span>
-<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>hosp_inc <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>hosp_inc <span class="ot">&lt;-</span> ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(allmuni) <span class="sc">+</span></span>
 <span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Incidence of dengue hospitalizations in 2015"</span>)<span class="sc">+</span></span>
 <span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>( <span class="fu">aes</span>(<span class="at">fill =</span> hosp_inc), <span class="at">size =</span> .<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
 <span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_stepsn</span>(<span class="at">breaks =</span> breaks2,</span>
@@ -1616,7 +1647,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>Daniela Lührsen, HARMONIZE</p>
+<p>HARMONIZE</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
@@ -1624,14 +1655,20 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/" target="_blank">
+    <a class="nav-link" href="https://github.com/harmonize-tools" target="_blank">
       <i class="bi bi-github" role="img">
 </i> 
     </a>
   </li>  
     <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/" target="_blank">
-      <i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://harmonize-tools.github.io/" target="_blank">
+      <i class="bi bi-wrench-adjustable-circle" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.harmonize-tools.org/" target="_blank">
+      <i class="bi bi-globe" role="img">
 </i> 
     </a>
   </li>  
