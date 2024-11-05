@@ -46,5 +46,47 @@
   },
   "brazil_malaria.qmd": {
     "brazil_malaria.html": "5ced10d7"
+  },
+  "brazil_report_public.qmd": {
+    "brazil_report_public.html": "26dee5a0"
+  },
+  "peru_report_technical.qmd": {
+    "peru_report_technical.html": "cd31cc3a"
+  },
+  "brazil_report_technical.qmd": {
+    "brazil_report_technical.html": "62b19feb"
+  },
+  "peru_report_public.qmd": {
+    "peru_report_public.html": "f0ab076f"
+  },
+  "colombia_report_public.qmd": {
+    "colombia_report_public.html": "67620b60"
+  },
+  "colombia_report_technical.qmd": {
+    "colombia_report_technical.html": "aac24a7d"
+  },
+  "domrep_report_public.qmd": {
+    "domrep_report_public.html": "f7c674cf"
+  },
+  "domrep_report_technical.qmd": {
+    "domrep_report_technical.html": "789c4f88"
+  },
+  "about_project.qmd": {
+    "about_project.html": "92a79621"
+  },
+  "about_tools.qmd": {
+    "about_tools.html": "8aff2599"
+  },
+  "about_data4health.qmd": {
+    "about_data4health.html": "fb856f07"
+  },
+  "colombia_lepto.qmd": {
+    "colombia_lepto.html": "4fb09029"
+  },
+  "brazil_report_technical_script.qmd": {
+    "brazil_report_technical_script.html": "2f183a9d"
+  },
+  "public/colombia_lepto.qmd": {
+    "colombia_lepto.html": "0dfa6d4f"
   }
 }

@@ -2,3 +2,33 @@
 title: "Technical Report Brazil"
 editor: visual
 ---
+
+The technical report will include:
+
+-   The completeness of the data
+
+-   temporal distribution
+
+-   Demographic profiles, including: Age, sec, race
+
+-   Spatial distribution
+
+{{< downloadthis /home/dluhrsen/Documents/harmonize/data4health-quartowebsite/.not_using_these_atm/brazil_report_technical_script.qmd label="Download technical report here" dname="Technical_report_brazil" type="success">}}
+
+Instructions on how to use the automated report:
+
+1.  Download the file above.
+2.  Open the file in RStudio.\
+    ![](images/Screenshot%20from%202024-11-05%2000-52-10.png)
+3.  In case the R studio editing mode is in "source", switch it to "visual" in the upper left corner.\
+    ![](images/paste-3E5AF2B5.png)
+4.  The first part of the document is called a YAML header:\
+    ![](images/paste-630126DF.png)\
+    This is the only part of the code that you need to modify. **Under 'file' you have to specify the filename, including its path, of the file that includes the data for the automated report.**\
+    You can change the title of the report in 'title'. And you can decide which graphs should be included by setting the name of the graph to TRUE (graph will be shown) or FALSE (graph will not be shown).
+5.  Throughout the document you can find comments, delimited by "<!--#" and "-->". These comments explain the document in case you want to learn. These will not be displayed in the final report, so there is no need to modify them.\
+    ![](images/paste-F41C851E.png)
+6.  The most important part of the document are the code blocks which look like this:\
+    ![](images/paste-C0B0F338.png)\
+    These code blocks define the graphs. They will also not be shown in the final report. If you want to modify a graph you can do it by modifying the code. Some changes, like changing the colors, are easier than others. We encourage you play with the code to learn!
+7.  Finally, to create the document you need to click on the "render" button in the top.

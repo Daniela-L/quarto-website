@@ -1,7 +1,6 @@
 project:
   type: website
-  output-dir: public
-
+  output-dir: docs
 website:
   favicon: images/harmonize_logo.png
   page-footer: 
@@ -24,20 +23,28 @@ website:
     background: primary
     search: true
     left:
-      - text: Home
-        href: index.qmd
-      - href: about.qmd
-        text: About
+      - sidebar:home
       - sidebar:instructions
       - sidebar:reports
       - href: ui_tool.qmd
         text: "No-coding tool"
       
   sidebar:
+    - id: home
+      title: Home
+      background: light
+      collapse-level: 0
+      contents:
+      - text: data4health
+        href: about_data4health.qmd
+      - href: about_project.qmd
+        text: HARMONIZE project
+      - href: about_tools.qmd
+        text: Toolkit
     - id: instructions
       title: "Instructions"
       background: light
-      collapse-level: 1
+      collapse-level: 3
       contents:
       - sections:
         text: Brazil

@@ -1,0 +1,159 @@
+---
+title: "Technical Report for Brazil"
+format: html
+execute: 
+  echo: false
+  warning: false
+  message: false
+params:
+  file: "/home/dluhrsen/Documents/harmonize/data4health-quartowebsite/data/den15.rds"
+  completeness: FALSE
+  temporal: TRUE
+  age: TRUE
+  sex: TRUE
+  race: TRUE
+  spatial: FALSE
+---
+
+<!--#  Parts that are written are comments to help guide you through this script. They will not appear in the final report. -->
+
+<!--# In this first code chunk, all necessary packages are loaded to crete the correct environment. -->
+
+```{r}
+packages <- c("dplyr", "purrr", "geobr", "ggplot2","lubridate", "stringr")
+install.packages(setdiff(packages, rownames(installed.packages())))
+lapply(packages, require, character.only = TRUE)
+```
+
+<!--# In this code chunk, the file in the path that you specified in params as 'file' is being read. -->
+
+```{r}
+
+data <- readRDS(params$file)
+
+```
+
+The following variables are incomplete, you can see percentage of incomplete data in the following graph:
+
+```{r}
+if (params$completeness == TRUE) {
+  NAcount <- data %>% map(~mean(is.na(.)))
+  NAcount <- data.frame(unlist(NAcount))
+  NAcount["var"] <- rownames(NAcount)
+  p <- ggplot(NAcount[35:55,], aes(x = reorder(var, unlist.NAcount.), y = unlist.NAcount.))+
+    geom_bar(stat = "identity", width = 0.9, position = position_dodge(width = 5))+
+    ylab("Percentage of NAs in each column")+
+    xlab("Variables")
+  p + coord_flip()
+}
+```
+
+The cases present the following temporal distribution:
+
+```{r}
+if (params$temporal == TRUE) {
+  dengueEpiWeek <- data %>%
+    mutate(epiweek = paste0(sprintf("%02d",epiweek(DT_NOTIFIC)), "-2015")) %>%
+    group_by(epiweek) %>%
+    summarise(count = n()) %>%
+    select(epiweek, count)
+  ggplot(dengueEpiWeek, aes(x = epiweek, y = count)) +
+    geom_bar(stat = "identity", fill = "lightblue", color="darkgrey",alpha = 0.7)+
+    annotate("text", x = Inf, y = Inf, hjust = 1, vjust = 1, size = 4,
+             label = paste0(sum(is.na(data$DT_NOTIFIC)), " NA values")) +
+    theme_minimal() +
+    labs(title = "Suspected dengue cases in 2015 by epiweek",
+         x = "Epiweek",
+         y = "Count") +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+}
+```
+
+Demographic profile
+
+Age
+
+```{r}
+if (params$age == TRUE) {
+  data  <- data %>%
+    mutate(AGE_CODE = case_when(NU_IDADE_N < 120 ~ as.numeric(NU_IDADE_N), # assumes that non-codified data means that the age in years was given
+                             NU_IDADE_N >= 120 & NU_IDADE_N < 1000 ~ NA_real_,
+                             NU_IDADE_N >= 1000 & NU_IDADE_N < 2366 ~ 0,
+                             NU_IDADE_N >= 2366 & NU_IDADE_N < 3000 ~ NA_real_,
+                             NU_IDADE_N >= 3000 & NU_IDADE_N < 3013 ~ 0,
+                             NU_IDADE_N >= 3013 & NU_IDADE_N < 4000 ~ NA_real_,
+                             NU_IDADE_N >= 4000 & NU_IDADE_N < 4120 ~ as.numeric(NU_IDADE_N - 4000),
+                             NU_IDADE_N >= 4120 ~ NA_real_,
+                             TRUE ~ NA_real_))
+  
+  ggplot(data[data$AGE_CODE < 120,], aes(x = AGE_CODE))+
+    geom_histogram(binwidth = 1, fill = "lightblue",color="black", alpha = 0.7)+
+    annotate("text", x = 100, y = Inf, hjust = 1, vjust = 1, size = 4,
+             label = paste0(sum(is.na(data$AGE_CODE)), " NA values"))+
+    labs(x="Age [years]", y="Count",
+         title="Age distribution according to the codified age field")+
+    theme_light()
+}
+```
+
+Sex
+
+```{r}
+if (params$sex == TRUE) {
+  data <- data %>%
+    mutate(CS_SEXO = as.factor(case_when(CS_SEXO == "F" ~ "Female",
+                                         CS_SEXO == "M" ~ "Male",
+                                         CS_SEXO == "I" ~ "Ignored",
+                                         TRUE ~ "NA")))
+  ggplot(data, aes(x = CS_SEXO, fill=CS_SEXO))+
+    geom_bar()+
+    ggtitle("Sex distribution of dengue cases in 2015")+
+    labs(x = "Sex of the patient", y = "Count", fill="Sex")+
+    annotate("text", x = Inf, y = Inf, hjust = 1, vjust = 1, size = 4,
+             label = paste0(sum(is.na(data$CS_SEXO)), " NA values"))+
+    theme_light()
+}
+```
+
+Race
+
+```{r}
+if (params$race == TRUE) {
+  data <- data %>%
+      mutate(CS_RACA = as.factor(case_when(CS_RACA == 1 ~ "White",
+                                         CS_RACA == 2 ~ "Black",
+                                         CS_RACA == 3 ~ "Yellow",
+                                         CS_RACA == 4 ~ "Brown",
+                                         CS_RACA == 5 ~ "Indigenous",
+                                         CS_RACA == 9 ~ "Ignored",
+                                         TRUE ~ "NA")))
+  ggplot(data, aes(x = CS_RACA, fill=CS_RACA)) +
+    geom_bar() +
+    ggtitle("Race/Color distribution of dengue cases in 2015") +
+    geom_text(stat = 'count',
+              aes(label = paste0(round((after_stat(count))/sum(after_stat(count)) * 100, 1), "%"),
+                  x = CS_RACA),
+              position = position_stack(vjust = 0.5)) +
+    labs(x="Race/Color of the patient", y="Count",fill="Race/Color")
+}
+```
+
+Spatial distribution
+
+```{r}
+if (params$spatial == TRUE) {
+  muni <- read_municipality(code_muni = "all", year = 2015, showProgress = FALSE) %>%
+    mutate(code_muni = str_sub(code_muni, end = 6))
+  noti <- as.data.frame(table(data$ID_MUNICIP, dnn = list("code_muni")), responseName = "noti_muni")
+  allmuni <- left_join(muni, noti)
+  cols <- c("green", "yellow","orange","red", "black")
+  breaks <- c(0,10,100,1000,10000,100000)
+  noti <- ggplot(allmuni) +
+    ggtitle("Notification municipality")+
+    geom_sf( aes(fill=noti_muni), size=.15, show.legend = TRUE) +
+    scale_fill_stepsn(breaks = breaks,
+                      colours = cols,
+                      values= scales::rescale(breaks))
+  noti
+}
+```
